@@ -72,3 +72,7 @@ C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingM
 C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\obj\Debug\CodingMarketPlace.csprojResolveAssemblyReference.cache
 C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\obj\Debug\CodingMarketPlace.dll
 C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\obj\Debug\CodingMarketPlace.pdb
+C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\bin\AppHarbor.Sdk.dll
+C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\bin\RestSharp.dll
+C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\bin\AppHarbor.Sdk.pdb
+C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\bin\RestSharp.xml
