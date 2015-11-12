@@ -126,7 +126,7 @@ namespace CodingMarketPlace.Controllers
 
             if (insc.validateInscription(project, id).Equals("ok"))
             {
-                return Request.CreateResponse(HttpStatusCode.OK);
+                return Request.CreateResponse(HttpStatusCode.Accepted);
             }
             else
             {
