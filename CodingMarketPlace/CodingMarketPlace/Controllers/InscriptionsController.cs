@@ -6,7 +6,7 @@ using System.Web.Http;
 
 namespace CodingMarketPlace.Controllers
 {
-    public class InscriptionsController : ApiController
+    public class InscriptionsController
     {
 
         private string Connection = Globals.ConnectionString;

@@ -11,15 +11,22 @@ namespace CodingMarketPlace.Controllers
     public class ContactController : ApiController
     {
 
-        public string Connection = "server=localhost;database=codingMarketPlace;userid='MarketPlaceAdmin';password='Passw0rd';";
-
         //Méthodes POST
 
         [HttpPost]
         [ActionName("Send")]
         public object Send([FromBody] Mail mail, string id)
         {
-            return Request.CreateResponse(HttpStatusCode.OK);
+            MailsController mailC = new MailsController();
+
+            if (mailC.createMail(mail.Content, id).Equals("ok"))
+            {
+                return Request.CreateResponse(HttpStatusCode.Created);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.MethodNotAllowed);
+            }
         }
 
     }
