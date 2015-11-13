@@ -70,6 +70,35 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Update")]
         public object Update([FromBody] User user, string id)
         {
+            int cptPointsToUpdate = 0;
+            if (user.Password != "")
+            {
+                cptPointsToUpdate++;
+            }
+            if (user.Email != "")
+            {
+                cptPointsToUpdate++;
+            }
+            if (user.Activated != false)
+            {
+                cptPointsToUpdate++;
+            }
+            if (user.FirstName != "")
+            {
+                cptPointsToUpdate++;
+            }
+            if (user.LastName != "")
+            {
+                cptPointsToUpdate++;
+            }
+            if (user.Description != "")
+            {
+                cptPointsToUpdate++;
+            }
+            if (user.ImageUrl != "")
+            {
+                cptPointsToUpdate++;
+            }
             if (id != "")
             {
                 string query = "UPDATE users SET ";
@@ -77,62 +106,65 @@ namespace CodingMarketPlace.Controllers
                 if (user.Password != "")
                 {
                     query += "Password = '" + encryptString(user.Password) + "'";
-                    if (user.Login != "")
+                    if (cptPointsToUpdate > 0)
                     {
                         query += ", ";
-                    }
-                }
-                if (user.Login != "")
-                {
-                    query += "Login = '" + user.Login + "'";
-                    if (user.Email != "")
-                    {
-                        query += ", ";
+                        cptPointsToUpdate--;
                     }
                 }
                 if (user.Email != "")
                 {
                     query += "Email = '" + user.Email + "'";
-                    if (user.Activated != false)
+                    if (cptPointsToUpdate > 0)
                     {
                         query += ", ";
+                        cptPointsToUpdate--;
                     }
                 }
                 if (user.Activated != false)
                 {
                     query += "Activated = " + user.Activated;
-                    if (user.FirstName != "")
+                    if (cptPointsToUpdate > 0)
                     {
                         query += ", ";
+                        cptPointsToUpdate--;
                     }
                 }
                 if (user.FirstName != "")
                 {
                     query += "first_name = '" + user.FirstName + "'";
-                    if (user.LastName != "")
+                    if (cptPointsToUpdate > 0)
                     {
                         query += ", ";
+                        cptPointsToUpdate--;
                     }
                 }
                 if (user.LastName != "")
                 {
                     query += "last_name = '" + user.LastName + "'";
-                    if (user.Description != "")
+                    if (cptPointsToUpdate > 0)
                     {
                         query += ", ";
+                        cptPointsToUpdate--;
                     }
                 }
                 if (user.Description != "")
                 {
                     query += "description = '" + user.Description + "'";
-                    if (user.ImageUrl != "")
+                    if (cptPointsToUpdate > 0)
                     {
                         query += ", ";
+                        cptPointsToUpdate--;
                     }
                 }
                 if (user.ImageUrl != "")
                 {
                     query += "image_Url = '" + user.ImageUrl + "'";
+                    if (cptPointsToUpdate > 0)
+                    {
+                        query += ", ";
+                        cptPointsToUpdate--;
+                    }
                 }
 
                 query += " WHERE uniq_id = '" + id + "'";
