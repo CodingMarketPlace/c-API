@@ -198,6 +198,7 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Login")]
         public User Login([FromBody] User user)
         {
+            //qskudfgvqjh
             User response = new User();
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Password, Login, Email, Uniq_id, Activated, Developper, Project_creator, first_name, last_name, admin, description, image_Url From users WHERE login = '" + user.Login + "'"))
             {
