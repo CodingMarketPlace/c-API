@@ -20,14 +20,15 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Send")]
         public object Send([FromBody] Mail mail, string id)
         {
-            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id From users WHERE uniq_id = '" + id + "'"))
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT Email From users WHERE id = '" + mail.IdUser + "'"))
             {
                 if (userChecker.HasRows)
                 {
+                    userChecker.Read();
                     MailsController mailC = new MailsController();
-                    if (mailC.createMail(mail.Content, id).Equals("ok"))
+                    if (mailC.createMail(mail.Content, mail.IdUser, userChecker.GetString(0)).Equals("ok"))
                     {
-                        return Request.CreateResponse(HttpStatusCode.Created, "Mail créé avec succès");
+                        return Request.CreateResponse(HttpStatusCode.Created, "Mail envoyé avec succès");
                     }
                     else
                     {

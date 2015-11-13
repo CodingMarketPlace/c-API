@@ -138,6 +138,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Globals.cs" />
+    <Compile Include="GmailDotComMail.cs" />
     <Compile Include="Models\Inscription.cs" />
     <Compile Include="Models\Mail.cs" />
     <Compile Include="Models\Project.cs" />
