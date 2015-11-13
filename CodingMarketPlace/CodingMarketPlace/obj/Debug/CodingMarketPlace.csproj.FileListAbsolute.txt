@@ -74,3 +74,6 @@ C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingM
 C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\obj\Debug\CodingMarketPlace.dll
 C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\obj\Debug\CodingMarketPlace.pdb
 C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\obj\Debug\CodingMarketPlace.csprojResolveAssemblyReference.cache
+C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Cors.dll
+C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Http.Cors.dll
+C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Http.Cors.xml

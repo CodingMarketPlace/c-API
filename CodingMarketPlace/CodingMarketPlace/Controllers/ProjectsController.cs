@@ -197,7 +197,7 @@ namespace CodingMarketPlace.Controllers
 
         [HttpDelete]
         [ActionName("Delete")]
-        public object Delete(string id, string unqId)
+        public object Delete(string id)
         {
             //Permet de récuperer l'ID user grace à son ID unique
             /*using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM users WHERE unqId = " + unqId))
@@ -232,7 +232,7 @@ namespace CodingMarketPlace.Controllers
 
             return response.Id = -1;*/
 
-            string query = "DELETE FROM projects where id = " + IdProject + " AND id_user = " + IdUser;
+            string query = "DELETE FROM projects where id = " + id;
 
             MySqlHelper.ExecuteNonQuery(Connection, query);
 
