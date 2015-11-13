@@ -26,11 +26,18 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Create")]
         public object Create([FromBody] User user)
         {
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT * From users WHERE Login = '" + user.Login + "' OR Email = '" + user.Email + "'"))
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Login, Email From users WHERE Login = '" + user.Login + "' OR Email = '" + user.Email + "'"))
             {
                 if (reader.HasRows)
                 {
-                    return Request.CreateResponse(HttpStatusCode.NotAcceptable, "Email or Login already exist");
+                    if (reader.GetString(0).Equals(user.Login))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Login already exist");
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Email already exist");
+                    }
                 }
             }
 
@@ -41,8 +48,7 @@ namespace CodingMarketPlace.Controllers
             DateTime localDate = DateTime.Now;
             var culture = new CultureInfo("fr-FR");
             string uniqId = number.ToString() + localDate.ToString(culture).Replace(" ", string.Empty).Replace("/", string.Empty).Replace(":", string.Empty);
-
-            // Create the parameters
+            
             List<MySqlParameter> parms = new List<MySqlParameter>();
             parms.Add(new MySqlParameter("email", user.Email));
             parms.Add(new MySqlParameter("password", encryptString(user.Password)));
@@ -57,7 +63,7 @@ namespace CodingMarketPlace.Controllers
 
             MySqlHelper.ExecuteNonQuery(Connection, query, parms.ToArray());
 
-            return Request.CreateResponse(HttpStatusCode.Created);
+            return Request.CreateResponse(HttpStatusCode.Created, "Utilisateur créé avec succes");
         }
 
         private string encryptString(string stringToEncrypt)
@@ -78,141 +84,160 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Update")]
         public object Update([FromBody] User user, string id)
         {
-            int cptPointsToUpdate = 0;
-            if (user.Password != "")
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT * From users WHERE uniq_id = '" + id + "'"))
             {
-                cptPointsToUpdate++;
-            }
-            if (user.Email != "")
-            {
-                cptPointsToUpdate++;
-            }
-            if (user.Activated != false)
-            {
-                cptPointsToUpdate++;
-            }
-            if (user.FirstName != "")
-            {
-                cptPointsToUpdate++;
-            }
-            if (user.LastName != "")
-            {
-                cptPointsToUpdate++;
-            }
-            if (user.Description != "")
-            {
-                cptPointsToUpdate++;
-            }
-            if (user.ImageUrl != "")
-            {
-                cptPointsToUpdate++;
-            }
-            if (id != "")
-            {
-                string query = "UPDATE users SET ";
+                if (reader.HasRows)
+                {
+                    int cptPointsToUpdate = 0;
+                    if (user.Password != "")
+                    {
+                        cptPointsToUpdate++;
+                    }
+                    if (user.Email != "")
+                    {
+                        using (MySqlDataReader mailChecker = MySqlHelper.ExecuteReader(Connection, "SELECT Email From users WHERE uniq_id = '" + id + "'"))
+                        {
+                            if (mailChecker.HasRows)
+                            {
+                                return Request.CreateResponse(HttpStatusCode.BadRequest, "Email already exist");
+                            }
+                        }
+                        cptPointsToUpdate++;
+                    }
+                    if (user.Activated != false)
+                    {
+                        cptPointsToUpdate++;
+                    }
+                    if (user.FirstName != "")
+                    {
+                        cptPointsToUpdate++;
+                    }
+                    if (user.LastName != "")
+                    {
+                        cptPointsToUpdate++;
+                    }
+                    if (user.Description != "")
+                    {
+                        cptPointsToUpdate++;
+                    }
+                    if (user.ImageUrl != "")
+                    {
+                        cptPointsToUpdate++;
+                    }
+                    string query = "UPDATE users SET ";
 
-                if (user.Password != "")
-                {
-                    query += "Password = '" + encryptString(user.Password) + "'";
-                    if (cptPointsToUpdate > 0)
+                    if (user.Password != "")
                     {
-                        query += ", ";
-                        cptPointsToUpdate--;
+                        query += "Password = '" + encryptString(user.Password) + "'";
+                        if (cptPointsToUpdate > 0)
+                        {
+                            query += ", ";
+                            cptPointsToUpdate--;
+                        }
                     }
-                }
-                if (user.Email != "")
-                {
-                    query += "Email = '" + user.Email + "'";
-                    if (cptPointsToUpdate > 0)
+                    if (user.Email != "")
                     {
-                        query += ", ";
-                        cptPointsToUpdate--;
+                        query += "Email = '" + user.Email + "'";
+                        if (cptPointsToUpdate > 0)
+                        {
+                            query += ", ";
+                            cptPointsToUpdate--;
+                        }
                     }
-                }
-                if (user.Activated != false)
-                {
-                    query += "Activated = " + user.Activated;
-                    if (cptPointsToUpdate > 0)
+                    if (user.Activated != false)
                     {
-                        query += ", ";
-                        cptPointsToUpdate--;
+                        query += "Activated = " + user.Activated;
+                        if (cptPointsToUpdate > 0)
+                        {
+                            query += ", ";
+                            cptPointsToUpdate--;
+                        }
                     }
-                }
-                if (user.FirstName != "")
-                {
-                    query += "first_name = '" + user.FirstName + "'";
-                    if (cptPointsToUpdate > 0)
+                    if (user.FirstName != "")
                     {
-                        query += ", ";
-                        cptPointsToUpdate--;
+                        query += "first_name = '" + user.FirstName + "'";
+                        if (cptPointsToUpdate > 0)
+                        {
+                            query += ", ";
+                            cptPointsToUpdate--;
+                        }
                     }
-                }
-                if (user.LastName != "")
-                {
-                    query += "last_name = '" + user.LastName + "'";
-                    if (cptPointsToUpdate > 0)
+                    if (user.LastName != "")
                     {
-                        query += ", ";
-                        cptPointsToUpdate--;
+                        query += "last_name = '" + user.LastName + "'";
+                        if (cptPointsToUpdate > 0)
+                        {
+                            query += ", ";
+                            cptPointsToUpdate--;
+                        }
                     }
-                }
-                if (user.Description != "")
-                {
-                    query += "description = '" + user.Description + "'";
-                    if (cptPointsToUpdate > 0)
+                    if (user.Description != "")
                     {
-                        query += ", ";
-                        cptPointsToUpdate--;
+                        query += "description = '" + user.Description + "'";
+                        if (cptPointsToUpdate > 0)
+                        {
+                            query += ", ";
+                            cptPointsToUpdate--;
+                        }
                     }
-                }
-                if (user.ImageUrl != "")
-                {
-                    query += "image_Url = '" + user.ImageUrl + "'";
-                    if (cptPointsToUpdate > 0)
+                    if (user.ImageUrl != "")
                     {
-                        query += ", ";
-                        cptPointsToUpdate--;
+                        query += "image_Url = '" + user.ImageUrl + "'";
+                        if (cptPointsToUpdate > 0)
+                        {
+                            query += ", ";
+                            cptPointsToUpdate--;
+                        }
                     }
-                }
 
-                query += " WHERE uniq_id = '" + id + "'";
+                    query += " WHERE uniq_id = '" + id + "'";
 
-                MySqlHelper.ExecuteNonQuery(Connection, query);
+                    MySqlHelper.ExecuteNonQuery(Connection, query);
 
-                return Request.CreateResponse(HttpStatusCode.OK);
+                    return Request.CreateResponse(HttpStatusCode.OK, "Utilisateur mis à jour avec succès");
+                }
             }
-            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+            return Request.CreateResponse(HttpStatusCode.BadRequest, "Erreur, mise à jour non effectuée");
         }
 
         [HttpPost]
         [ActionName("ChangeRole")]
         public object ChangeRole([FromBody] User user, string id)
         {
-            if (id != "")
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Admin FROM users WHERE uniq_id = '" + id + "'"))
             {
-                string query = "UPDATE users SET Admin = " + user.Admin + ", project_creator = " + user.ProjectCreator + ", developper = " + user.Developper + " WHERE uniq_id = '" + id + "'";
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    
+                    if (reader.GetBoolean(0) == true)
+                    {
+                        string query = "UPDATE users SET Admin = " + user.Admin + ", project_creator = " + user.ProjectCreator + ", developper = " + user.Developper + " WHERE uniq_id = '" + user.UniqId + "'";
 
-                MySqlHelper.ExecuteNonQuery(Connection, query);
+                        MySqlHelper.ExecuteNonQuery(Connection, query);
 
-                return Request.CreateResponse(HttpStatusCode.OK);
+                        return Request.CreateResponse(HttpStatusCode.OK, "Rôle utilisateur mis à jour avec succès");
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Vous n'êtes pas administrateur");
+                    }
+                }
             }
-            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+            return Request.CreateResponse(HttpStatusCode.BadRequest, "Rôle non changé");
         }
 
         //Méthodes GET
 
         [HttpGet]
         [ActionName("All")]
-        public IEnumerable<User> GetAllUsers()
+        public object GetAllUsers()
         {
             List<User> users = new List<User>();
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Password, Login, Email, Uniq_id, Activated, Developper, Project_creator, first_name, last_name, admin, description, image_Url From users"))
             {
-                // Check if the reader returned any rows
                 if (reader.HasRows)
                 {
-                    // While the reader has rows we loop through them,
-                    // create new users, and insert them into our list
                     while (reader.Read())
                     {
                         User user = new User();
@@ -231,22 +256,18 @@ namespace CodingMarketPlace.Controllers
                     }
                 }
             }
-            return users;
+            return Request.CreateResponse(HttpStatusCode.OK, users);
         }
 
         [HttpPost]
         [ActionName("Login")]
-        public User Login([FromBody] User user)
+        public object Login([FromBody] User user)
         {
-            //qskudfgvqjh
             User response = new User();
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Password, Login, Email, Uniq_id, Activated, Developper, Project_creator, first_name, last_name, admin, description, image_Url From users WHERE login = '" + user.Login + "'"))
             {
-                // Check if the reader returned any rows
                 if (reader.HasRows)
                 {
-                    // While the reader has rows we loop through them,
-                    // create new users, and insert them into our list
                     reader.Read();
                     string pass = decryptString(reader.GetString(0));
                     if (pass.Equals(user.Password))
@@ -262,26 +283,26 @@ namespace CodingMarketPlace.Controllers
                         response.Admin = reader.GetBoolean(9);
                         response.Description = reader.GetString(10);
                         response.ImageUrl = reader.GetString(11);
-                        return response;
+                        return Request.CreateResponse(HttpStatusCode.OK, response);
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "login failed");
                     }
                 }
             }
-            response.Id = -1;
-            return response;
+            return Request.CreateResponse(HttpStatusCode.BadRequest, "Login Error");
         }
 
         [HttpGet]
         [ActionName("Detail")]
-        public User GetUserDetail(string id)
+        public object GetUserDetail(string id)
         {
             User response = new User();
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Password, Login, Email, Uniq_id, Activated, Developper, Project_creator, first_name, last_name, admin, description, image_Url From users WHERE uniq_id = " + id))
             {
-                // Check if the reader returned any rows
                 if (reader.HasRows)
                 {
-                    // While the reader has rows we loop through them,
-                    // create new users, and insert them into our list
                     reader.Read();
                     response.Login = reader.GetString(1);
                     response.Email = reader.GetString(2);
@@ -294,11 +315,13 @@ namespace CodingMarketPlace.Controllers
                     response.Admin = reader.GetBoolean(9);
                     response.Description = reader.GetString(10);
                     response.ImageUrl = reader.GetString(11);
-                    return response;
+                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "wrong id");
                 }
             }
-            response.Id = -1;
-            return response;
         }
 
         //Méthodes DELETE
@@ -309,11 +332,8 @@ namespace CodingMarketPlace.Controllers
         {
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Admin FROM users WHERE uniq_id = '" + user.UniqId + "'"))
             {
-                // Check if the reader returned any rows
                 if (reader.HasRows)
                 {
-                    // While the reader has rows we loop through them,
-                    // create new users, and insert them into our list
                     reader.Read();
 
                     bool userAdmin;
@@ -322,12 +342,15 @@ namespace CodingMarketPlace.Controllers
                     {
                         string query = "DELETE FROM users where uniq_id = '" + id + "'";
                         MySqlHelper.ExecuteNonQuery(Connection, query);
-                        return Request.CreateResponse(HttpStatusCode.OK);
+                        return Request.CreateResponse(HttpStatusCode.OK, "User deleted successfully");
                     }
-
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "You are not an administrator");
+                    }
                 }
             }
-            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+            return Request.CreateResponse(HttpStatusCode.BadRequest, "Deletion error");
         }
 
     }
