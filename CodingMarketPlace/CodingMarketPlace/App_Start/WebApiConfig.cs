@@ -21,7 +21,7 @@ namespace CodingMarketPlace
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            var corsAttr = new EnableCorsAttribute("*", "*", "*");
+            var corsAttr = new EnableCorsAttribute("http://codingmarketplace.herokuapp.com", "*", "*");
             config.EnableCors(corsAttr);
         }
     }
