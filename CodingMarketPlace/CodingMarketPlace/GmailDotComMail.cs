@@ -34,6 +34,7 @@ namespace CodingMarketPlace
                 mail.Subject = subject;
                 mail.Body = message;
                 client.Send(mail);
+                client.Dispose();
             }
             catch (Exception ex)
             {
