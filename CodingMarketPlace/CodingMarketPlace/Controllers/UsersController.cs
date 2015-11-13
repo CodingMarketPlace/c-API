@@ -26,6 +26,14 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Create")]
         public object Create([FromBody] User user)
         {
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT * From users WHERE Login = '" + user.Login + "' OR Email = '" + user.Email + "'"))
+            {
+                if (reader.HasRows)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotAcceptable, "Email or Login already exist");
+                }
+            }
+
             string query = "INSERT INTO users (Id, Email, password, login, developper, project_creator, description, image_url, first_name, last_name, uniq_id) VALUES (NULL, @email, @password, @login, @developper, @projectCreator, @description, @imageUrl, @firstName, @lastName, @uniqId)";
 
             Random rnd = new Random();
@@ -297,13 +305,29 @@ namespace CodingMarketPlace.Controllers
 
         [HttpDelete]
         [ActionName("Delete")]
-        public object Delete(string id)
+        public object Delete([FromBody] User user, string id)
         {
-            string query = "DELETE FROM users where uniq_id = '" + id + "'";
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Admin FROM users WHERE uniq_id = '" + user.UniqId + "'"))
+            {
+                // Check if the reader returned any rows
+                if (reader.HasRows)
+                {
+                    // While the reader has rows we loop through them,
+                    // create new users, and insert them into our list
+                    reader.Read();
 
-            MySqlHelper.ExecuteNonQuery(Connection, query);
+                    bool userAdmin;
+                    userAdmin = reader.GetBoolean(0);
+                    if (userAdmin == true)
+                    {
+                        string query = "DELETE FROM users where uniq_id = '" + id + "'";
+                        MySqlHelper.ExecuteNonQuery(Connection, query);
+                        return Request.CreateResponse(HttpStatusCode.OK);
+                    }
 
-            return Request.CreateResponse(HttpStatusCode.OK);
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
         }
 
     }

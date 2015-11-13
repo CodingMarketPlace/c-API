@@ -77,3 +77,45 @@ C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingM
 C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Cors.dll
 C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Http.Cors.dll
 C:\Users\Baptiste\Documents\Cours\Ingésup E1\Majeure1_web\ASP NET\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Http.Cors.xml
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\csc.exe
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\vbc.exe
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\VBCSCompiler.exe
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\CodingMarketPlace.dll.config
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\CodingMarketPlace.XML
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\CodingMarketPlace.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\CodingMarketPlace.pdb
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\Antlr3.Runtime.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\MySql.Data.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\Newtonsoft.Json.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\RestSharp.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\Swashbuckle.Core.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Net.Http.Formatting.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Cors.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Http.Cors.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Http.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Http.WebHost.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\WebActivator.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\WebActivatorEx.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\WebGrease.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\Antlr3.Runtime.pdb
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\RestSharp.xml
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Http.Cors.xml
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\Newtonsoft.Json.xml
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Net.Http.Formatting.xml
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Http.xml
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\bin\System.Web.Http.WebHost.xml
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\obj\Debug\CodingMarketPlace.csprojResolveAssemblyReference.cache
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\obj\Debug\CodingMarketPlace.dll
+C:\Users\eliot\Documents\Git\c-API\CodingMarketPlace\CodingMarketPlace\obj\Debug\CodingMarketPlace.pdb
