@@ -19,136 +19,207 @@ namespace CodingMarketPlace.Controllers
 
         [HttpPost]
         [ActionName("Create")]
-        public object Create([FromBody] Project project)
+        public object Create([FromBody] Project project, string id)
         {
-            string query = "INSERT INTO projects (Id, title, description, duration, budget, id_user, image_url, creation_date) VALUES (NULL, @title, @description, @duration, @budget, @id_user, @image_url, @creation_date)";
-            
-            DateTime localDate = DateTime.Now;
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT project_creator, id From users WHERE uniq_id = '" + id + "'"))
+            {
+                if (userChecker.HasRows)
+                {
+                    userChecker.Read();
+                    if (userChecker.GetBoolean(0))
+                    {
+                        string query = "INSERT INTO projects (Id, title, description, duration, budget, id_user, image_url, creation_date) VALUES (NULL, @title, @description, @duration, @budget, @id_user, @image_url, @creation_date)";
 
-            // Create the parameters
-            List<MySqlParameter> parms = new List<MySqlParameter>();
-            parms.Add(new MySqlParameter("title", project.Title));
-            parms.Add(new MySqlParameter("description", project.Description));
-            parms.Add(new MySqlParameter("duration", project.Duration));
-            parms.Add(new MySqlParameter("budget", project.Budget));
-            parms.Add(new MySqlParameter("id_user", project.IdUser));
-            parms.Add(new MySqlParameter("image_url", project.ImageUrl));
-            parms.Add(new MySqlParameter("creation_date", localDate));
+                        DateTime localDate = DateTime.Now;
 
-            MySqlHelper.ExecuteNonQuery(Connection, query, parms.ToArray());
+                        // Create the parameters
+                        List<MySqlParameter> parms = new List<MySqlParameter>();
+                        parms.Add(new MySqlParameter("title", project.Title));
+                        parms.Add(new MySqlParameter("description", project.Description));
+                        parms.Add(new MySqlParameter("duration", project.Duration));
+                        parms.Add(new MySqlParameter("budget", project.Budget));
+                        parms.Add(new MySqlParameter("id_user", userChecker.GetInt32(1)));
+                        parms.Add(new MySqlParameter("image_url", project.ImageUrl));
+                        parms.Add(new MySqlParameter("creation_date", localDate));
 
-            return Request.CreateResponse(HttpStatusCode.Created);
+                        MySqlHelper.ExecuteNonQuery(Connection, query, parms.ToArray());
+                        return Request.CreateResponse(HttpStatusCode.Created, "Project successfully created");
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "You are not a project creator");
+                    }
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.BadRequest, "Error, project could not be created");
         }
 
         [HttpPost]
         [ActionName("Update")]
         public object Update([FromBody] Project project, string id)
         {
-            if (id != "")
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id From users WHERE uniq_id = '" + id + "'"))
             {
-                string query = "UPDATE projects SET ";
+                if (userChecker.HasRows)
+                {
+                    userChecker.Read();
+                    if (userChecker.GetInt32(0) == project.IdUser)
+                    {
+                        int cptPointsToUpdate = 0;
+                        if (project.Title != "")
+                        {
+                            cptPointsToUpdate++;
+                        }
+                        if (project.Description != "")
+                        {
+                            cptPointsToUpdate++;
+                        }
+                        if (project.Duration > 0)
+                        {
+                            cptPointsToUpdate++;
+                        }
+                        if (project.Budget > 0)
+                        {
+                            cptPointsToUpdate++;
+                        }
+                        if (project.ImageUrl != "")
+                        {
+                            cptPointsToUpdate++;
+                        }
+                        string query = "UPDATE projects SET ";
 
-                if (project.Title != "")
-                {
-                    query += "Title = '" + project.Title + "'";
-                    if (project.Description != "")
-                    {
-                        query += ", ";
-                    }
-                }
-                if (project.Description != "")
-                {
-                    query += "Description = '" + project.Description + "'";
-                    if (project.Duration != 0)
-                    {
-                        query += ", ";
-                    }
-                }
-                if (project.Duration != 0)
-                {
-                    query += "Duration = " + project.Duration;
-                    if (project.Budget != 0)
-                    {
-                        query += ", ";
-                    }
-                }
-                if (project.Budget != 0)
-                {
-                    query += "Budget = " + project.Budget;
-                    if (project.IdUser != 0)
-                    {
-                        query += ", ";
-                    }
-                }
-                if (project.IdUser != 0)
-                {
-                    query += "id_user = " + project.IdUser;
-                    if (project.ImageUrl != "")
-                    {
-                        query += ", ";
-                    }
-                }
-                if (project.ImageUrl != "")
-                {
-                    query += "image_url = '" + project.ImageUrl + "'";
-                }
+                        if (project.Title != "")
+                        {
+                            query += "Title = '" + project.Title + "'";
+                            if (cptPointsToUpdate > 0)
+                            {
+                                query += ", ";
+                                cptPointsToUpdate--;
+                            }
+                        }
+                        if (project.Description != "")
+                        {
+                            query += "Description = '" + project.Description + "'";
+                            if (cptPointsToUpdate > 0)
+                            {
+                                query += ", ";
+                                cptPointsToUpdate--;
+                            }
+                        }
+                        if (project.Duration > 0)
+                        {
+                            query += "Duration = " + project.Duration;
+                            if (cptPointsToUpdate > 0)
+                            {
+                                query += ", ";
+                                cptPointsToUpdate--;
+                            }
+                        }
+                        if (project.Budget > 0)
+                        {
+                            query += "Budget = " + project.Budget;
+                            if (cptPointsToUpdate > 0)
+                            {
+                                query += ", ";
+                                cptPointsToUpdate--;
+                            }
+                        }
+                        if (project.ImageUrl != "")
+                        {
+                            query += "image_url = '" + project.ImageUrl + "'";
+                            if (cptPointsToUpdate > 0)
+                            {
+                                cptPointsToUpdate--;
+                            }
+                        }
 
-                query += " WHERE id = '" + id + "'";
+                        query += " WHERE id = '" + project.Id + "'";
 
-                MySqlHelper.ExecuteNonQuery(Connection, query);
+                        MySqlHelper.ExecuteNonQuery(Connection, query);
 
-                return Request.CreateResponse(HttpStatusCode.OK);
+                        return Request.CreateResponse(HttpStatusCode.OK);
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "You are not the project owner");
+                    }
+                }
             }
-            return Request.CreateResponse(HttpStatusCode.NotAcceptable);
+            return Request.CreateResponse(HttpStatusCode.BadRequest, "Error");
         }
 
         [HttpPost]
         [ActionName("Apply")]
         public object ApplyToProject([FromBody] Project project, string id)
         {
-            InscriptionsController insc = new InscriptionsController();
-
-            if (insc.createInscription(project, id).Equals("ok"))
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT developper From users WHERE uniq_id = '" + id + "'"))
             {
-                return Request.CreateResponse(HttpStatusCode.Created);
+                if (userChecker.HasRows)
+                {
+                    userChecker.Read();
+                    if (userChecker.GetBoolean(0))
+                    {
+                        InscriptionsController insc = new InscriptionsController();
+                        if (insc.createInscription(project, id).Equals("ok"))
+                        {
+                            return Request.CreateResponse(HttpStatusCode.Created, "Inscription to project successful");
+                        }
+                        else
+                        {
+                            return Request.CreateResponse(HttpStatusCode.BadRequest, "Error, inscription to project denied");
+                        }
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "You are not a developper");
+                    }
+                }
             }
-            else
-            {
-                return Request.CreateResponse(HttpStatusCode.MethodNotAllowed);
-            }
+            return Request.CreateResponse(HttpStatusCode.BadRequest, "Error, could not proceed to inscription");
         }
 
         [HttpPost]
         [ActionName("Validate")]
         public object Validate([FromBody] Project project, string id)
         {
-            InscriptionsController insc = new InscriptionsController();
-
-            if (insc.validateInscription(project, id).Equals("ok"))
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id From users WHERE uniq_id = '" + id + "'"))
             {
+                if (userChecker.HasRows)
+                {
+                    userChecker.Read();
+                    if (userChecker.GetInt32(0) == project.IdUser)
+                    {
+                        InscriptionsController insc = new InscriptionsController();
+                        if (insc.validateInscription(project, id).Equals("ok"))
+                        {
 
-                return Request.CreateResponse(HttpStatusCode.Accepted);
+                            return Request.CreateResponse(HttpStatusCode.OK, "Project has been validated");
+                        }
+                        else
+                        {
+                            return Request.CreateResponse(HttpStatusCode.BadRequest, "Project could not be validated");
+                        }
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "You are not the project owner");
+                    }
+                }
             }
-            else
-            {
-                return Request.CreateResponse(HttpStatusCode.MethodNotAllowed);
-            }
+            return Request.CreateResponse(HttpStatusCode.BadRequest, "Error, could not proceed to validation");
         }
 
         //Méthodes GET
 
         [HttpGet]
         [ActionName("All")]
-        public IEnumerable<Project> getAllProjects()
+        public object getAllProjects()
         {
             List<Project> projects = new List<Project>();
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects"))
             {
-                // Check if the reader returned any rows
                 if (reader.HasRows)
                 {
-                    // While the reader has rows we loop through them,
-                    // create new users, and insert them into our list
                     while (reader.Read())
                     {
                         Project project = new Project();
@@ -163,7 +234,7 @@ namespace CodingMarketPlace.Controllers
                     }
                 }
             }
-            return projects;
+            return Request.CreateResponse(HttpStatusCode.OK, projects);
         }
 
         [HttpGet]
@@ -173,11 +244,8 @@ namespace CodingMarketPlace.Controllers
             Project response = new Project();
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects WHERE id = " + id))
             {
-                // Check if the reader returned any rows
                 if (reader.HasRows)
                 {
-                    // While the reader has rows we loop through them,
-                    // create new users, and insert them into our list
                     reader.Read();
                     response.Title = reader.GetString(0);
                     response.Description = reader.GetString(1);
@@ -186,59 +254,39 @@ namespace CodingMarketPlace.Controllers
                     response.IdUser = reader.GetInt32(4);
                     response.ImageUrl = reader.GetString(5);
                     response.CreationDate = reader.GetDateTime(6);
-                    return response;
+                    return Request.CreateResponse(HttpStatusCode.OK, response);
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "wrong id");
                 }
             }
-            response.Id = -1;
-            return response;
         }
 
         //Méthodes DELETE
 
         [HttpDelete]
         [ActionName("Delete")]
-        public object Delete(string id)
+        public object Delete([FromBody] User user, string id)
         {
-            //Permet de récuperer l'ID user grace à son ID unique
-            /*using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM users WHERE unqId = " + unqId))
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Admin FROM users WHERE uniq_id = '" + id + "'"))
             {
                 if (reader.HasRows)
                 {
-                    IdUser = reader.GetInt32(0);
-                }
-            }
-
-            //Permet de vérifier si le projet appartient à ce user 
-            if (IdUser)
-            {
-                using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM projects WHERE IdUser = " + id_user + "AND id = " + id))
-                {
-                    if (reader.HasRows)
+                    reader.Read();
+                    if (reader.GetBoolean(0) == true)
                     {
-                        IdProject = reader.GetInt32(0);
+                        string query = "DELETE FROM projects where id = " + id;
+                        MySqlHelper.ExecuteNonQuery(Connection, query);
+                        return Request.CreateResponse(HttpStatusCode.OK, "Project deleted successfully");
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "You are not an administrator");
                     }
                 }
             }
-
-            //Supprime le projet si et seulement si IdProject et IdUser existe
-            if (IdProject && IdUser)
-            {
-                string query = "DELETE FROM projects where id = " + IdProject + " AND id_user = " + IdUser;
-
-                MySqlHelper.ExecuteNonQuery(Connection, query);
-
-                return Request.CreateResponse(HttpStatusCode.OK);
-            }
-
-            return response.Id = -1;*/
-
-            string query = "DELETE FROM projects where id = " + id;
-
-            MySqlHelper.ExecuteNonQuery(Connection, query);
-
-            return Request.CreateResponse(HttpStatusCode.OK);
-
+            return Request.CreateResponse(HttpStatusCode.BadRequest, "Deletion error");
         }
-
     }
 }

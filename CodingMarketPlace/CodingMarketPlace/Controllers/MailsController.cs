@@ -16,8 +16,8 @@ namespace CodingMarketPlace.Controllers
 
         public string createMail(string content, string id)
         {
+            //Ici, envoi de mail
             string query = "INSERT INTO mails (Id, id_user, content) VALUES (NULL, " + id + ", '" + content + "')";
-
             MySqlHelper.ExecuteNonQuery(Connection, query);
             return "ok";
         }

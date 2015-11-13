@@ -185,7 +185,6 @@ namespace CodingMarketPlace.Controllers
                         query += "image_Url = '" + user.ImageUrl + "'";
                         if (cptPointsToUpdate > 0)
                         {
-                            query += ", ";
                             cptPointsToUpdate--;
                         }
                     }
@@ -330,17 +329,14 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Delete")]
         public object Delete([FromBody] User user, string id)
         {
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Admin FROM users WHERE uniq_id = '" + user.UniqId + "'"))
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Admin FROM users WHERE uniq_id = '" + id + "'"))
             {
                 if (reader.HasRows)
                 {
                     reader.Read();
-
-                    bool userAdmin;
-                    userAdmin = reader.GetBoolean(0);
-                    if (userAdmin == true)
+                    if (reader.GetBoolean(0) == true)
                     {
-                        string query = "DELETE FROM users where uniq_id = '" + id + "'";
+                        string query = "DELETE FROM users where uniq_id = '" + user.UniqId + "'";
                         MySqlHelper.ExecuteNonQuery(Connection, query);
                         return Request.CreateResponse(HttpStatusCode.OK, "User deleted successfully");
                     }
