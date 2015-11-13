@@ -200,7 +200,7 @@ namespace CodingMarketPlace.Controllers
         public object Delete(string id, string unqId)
         {
             //Permet de récuperer l'ID user grace à son ID unique
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM users WHERE unqId = " + unqId))
+            /*using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM users WHERE unqId = " + unqId))
             {
                 if (reader.HasRows)
                 {
@@ -230,8 +230,14 @@ namespace CodingMarketPlace.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK);
             }
 
-            return response.Id = -1;
-            
+            return response.Id = -1;*/
+
+            string query = "DELETE FROM projects where id = " + IdProject + " AND id_user = " + IdUser;
+
+            MySqlHelper.ExecuteNonQuery(Connection, query);
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+
         }
 
     }
