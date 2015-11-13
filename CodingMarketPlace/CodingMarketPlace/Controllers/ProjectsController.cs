@@ -126,6 +126,7 @@ namespace CodingMarketPlace.Controllers
 
             if (insc.validateInscription(project, id).Equals("ok"))
             {
+
                 return Request.CreateResponse(HttpStatusCode.Accepted);
             }
             else
@@ -196,13 +197,41 @@ namespace CodingMarketPlace.Controllers
 
         [HttpDelete]
         [ActionName("Delete")]
-        public object Delete(string id)
+        public object Delete(string id, string unqId)
         {
-            string query = "DELETE FROM projects where id = " + id;
+            //Permet de récuperer l'ID user grace à son ID unique
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM users WHERE unqId = " + unqId))
+            {
+                if (reader.HasRows)
+                {
+                    IdUser = reader.GetInt32(0);
+                }
+            }
 
-            MySqlHelper.ExecuteNonQuery(Connection, query);
+            //Permet de vérifier si le projet appartient à ce user 
+            if (IdUser)
+            {
+                using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM projects WHERE IdUser = " + id_user + "AND id = " + id))
+                {
+                    if (reader.HasRows)
+                    {
+                        IdProject = reader.GetInt32(0);
+                    }
+                }
+            }
 
-            return Request.CreateResponse(HttpStatusCode.OK);
+            //Supprime le projet si et seulement si IdProject et IdUser existe
+            if (IdProject && IdUser)
+            {
+                string query = "DELETE FROM projects where id = " + IdProject + " AND id_user = " + IdUser;
+
+                MySqlHelper.ExecuteNonQuery(Connection, query);
+
+                return Request.CreateResponse(HttpStatusCode.OK);
+            }
+
+            return response.Id = -1;
+            
         }
 
     }
