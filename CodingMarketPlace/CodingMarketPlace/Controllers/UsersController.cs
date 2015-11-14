@@ -22,6 +22,13 @@ namespace CodingMarketPlace.Controllers
 
         //Méthodes POST
 
+        /// <summary>
+        /// Add new user
+        /// </summary>
+        /// <param name="user">User Model</param>
+        /// <remarks>Insert new user</remarks>
+        /// <response code="201">User successfully created</response>
+        /// <response code="400">Login or Email already existing in database</response>
         [HttpPost]
         [ActionName("Create")]
         public object Create([FromBody] User user)
@@ -80,6 +87,14 @@ namespace CodingMarketPlace.Controllers
             return Encoding.Unicode.GetString(RSA.Decrypt(tableau, false));
         }
 
+        /// <summary>
+        /// Update a user
+        /// </summary>
+        /// <param name="user">User Model</param>
+        /// <param name="id">the user id</param>
+        /// <remarks>Update the user sent in the body, after checking if he is the one asking it</remarks>
+        /// <response code="200">User successfully updated</response>
+        /// <response code="400">You are not the user you want to update</response>
         [HttpPost]
         [ActionName("Update")]
         public object Update([FromBody] User user, string id)
@@ -199,6 +214,15 @@ namespace CodingMarketPlace.Controllers
             return Request.CreateResponse(HttpStatusCode.BadRequest, "Erreur, mise à jour non effectuée");
         }
 
+        /// <summary>
+        /// Change a user's role
+        /// </summary>
+        /// <param name="user">User Model</param>
+        /// <param name="id">the user id</param>
+        /// <remarks>Change roles from the user sent in the body [only usable by administrators]</remarks>
+        /// <response code="200">User successfully updated</response>
+        /// <response code="400">You are not an administrator</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost]
         [ActionName("ChangeRole")]
         public object ChangeRole([FromBody] User user, string id)
@@ -223,41 +247,17 @@ namespace CodingMarketPlace.Controllers
                     }
                 }
             }
-            return Request.CreateResponse(HttpStatusCode.BadRequest, "Rôle non changé");
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Rôle non changé");
         }
 
-        //Méthodes GET
-
-        [HttpGet]
-        [ActionName("All")]
-        public object GetAllUsers()
-        {
-            List<User> users = new List<User>();
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Password, Login, Email, Uniq_id, Activated, Developper, Project_creator, first_name, last_name, admin, description, image_Url From users"))
-            {
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        User user = new User();
-                        user.Login = reader.GetString(1);
-                        user.Email = reader.GetString(2);
-                        user.UniqId = reader.GetString(3);
-                        user.Activated = reader.GetBoolean(4);
-                        user.Developper = reader.GetBoolean(5);
-                        user.ProjectCreator = reader.GetBoolean(6);
-                        user.FirstName = reader.GetString(7);
-                        user.LastName = reader.GetString(8);
-                        user.Admin = reader.GetBoolean(9);
-                        user.Description = reader.GetString(10);
-                        user.ImageUrl = reader.GetString(11);
-                        users.Add(user);
-                    }
-                }
-            }
-            return Request.CreateResponse(HttpStatusCode.OK, users);
-        }
-
+        /// <summary>
+        /// Ask for user login
+        /// </summary>
+        /// <param name="user">User Model</param>
+        /// <remarks>Try to login the user</remarks>
+        /// <response code="200">User successfully logged in</response>
+        /// <response code="400">log in failed</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost]
         [ActionName("Login")]
         public object Login([FromBody] User user)
@@ -290,9 +290,55 @@ namespace CodingMarketPlace.Controllers
                     }
                 }
             }
-            return Request.CreateResponse(HttpStatusCode.BadRequest, "Login Error");
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Login Error");
         }
 
+        //Méthodes GET
+
+        /// <summary>
+        /// Get all users
+        /// </summary>
+        /// <remarks>Get all users</remarks>
+        /// <response code="200">List successfully returned</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet]
+        [ActionName("All")]
+        public object GetAllUsers()
+        {
+            List<User> users = new List<User>();
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Password, Login, Email, Uniq_id, Activated, Developper, Project_creator, first_name, last_name, admin, description, image_Url From users"))
+            {
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        User user = new User();
+                        user.Login = reader.GetString(1);
+                        user.Email = reader.GetString(2);
+                        user.UniqId = reader.GetString(3);
+                        user.Activated = reader.GetBoolean(4);
+                        user.Developper = reader.GetBoolean(5);
+                        user.ProjectCreator = reader.GetBoolean(6);
+                        user.FirstName = reader.GetString(7);
+                        user.LastName = reader.GetString(8);
+                        user.Admin = reader.GetBoolean(9);
+                        user.Description = reader.GetString(10);
+                        user.ImageUrl = reader.GetString(11);
+                        users.Add(user);
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, users);
+                }
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An error occured");
+            }
+        }
+        
+        /// <summary>
+        /// Ask for user detail
+        /// </summary>
+        /// <param name="id">user's id</param>
+        /// <remarks>Get a user's detail</remarks>
+        /// <response code="200">Returned user's details</response>
+        /// <response code="400">Wrong id</response>
         [HttpGet]
         [ActionName("Detail")]
         public object GetUserDetail(string id)
@@ -325,6 +371,15 @@ namespace CodingMarketPlace.Controllers
 
         //Méthodes DELETE
 
+        /// <summary>
+        /// Delete a user
+        /// </summary>
+        /// <param name="user">User Model</param>
+        /// <param name="id">user's id</param>
+        /// <remarks>Delete a user after checking that you are an administrator</remarks>
+        /// <response code="200">User successfully deleted</response>
+        /// <response code="400">You are not an administrator</response>
+        /// <response code="500">Internal server error</response>
         [HttpDelete]
         [ActionName("Delete")]
         public object Delete([FromBody] User user, string id)
@@ -346,7 +401,7 @@ namespace CodingMarketPlace.Controllers
                     }
                 }
             }
-            return Request.CreateResponse(HttpStatusCode.BadRequest, "Deletion error");
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Deletion error");
         }
 
     }

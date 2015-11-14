@@ -17,7 +17,7 @@ namespace CodingMarketPlace.Controllers
 
         public string createMail(string content, int id, string contactMailAddress)
         {
-            string emailAddress = "codingmarketplace@gmail.com", password = "y5314a!h5Xn94";
+            string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
 
             var sender = new GmailDotComMail(emailAddress, password);
             sender.SendMail(contactMailAddress, "Coding MarketPlace - contact", content);
@@ -25,12 +25,6 @@ namespace CodingMarketPlace.Controllers
             string query = "INSERT INTO mails (Id, id_user, content) VALUES (NULL, " + id + ", '" + content + "')";
             MySqlHelper.ExecuteNonQuery(Connection, query);
             return "ok";
-        }
-
-        static bool RedirectionCallback(string url)
-        {
-            // Return true if the URL is an HTTPS URL.
-            return url.ToLower().StartsWith("https://");
         }
     }
 }

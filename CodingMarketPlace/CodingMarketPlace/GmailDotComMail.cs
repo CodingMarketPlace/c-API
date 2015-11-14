@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
-using System.Web;
 
 namespace CodingMarketPlace
 {
@@ -23,23 +23,17 @@ namespace CodingMarketPlace
             client.Port = 587;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.UseDefaultCredentials = false;
-            System.Net.NetworkCredential credentials =
-                new System.Net.NetworkCredential(_sender, _password);
+            NetworkCredential credentials = new NetworkCredential(_sender, _password);
             client.EnableSsl = true;
             client.Credentials = credentials;
 
-            try
+            using (var mail = new MailMessage(_sender.Trim(), recipient.Trim())
             {
-                var mail = new MailMessage(_sender.Trim(), recipient.Trim());
-                mail.Subject = subject;
-                mail.Body = message;
+                Subject = subject,
+                Body = message
+            })
+            {
                 client.Send(mail);
-                client.Dispose();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                throw ex;
             }
         }
     }

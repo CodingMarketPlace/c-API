@@ -20,24 +20,34 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Send")]
         public object Send([FromBody] Mail mail, string id)
         {
-            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT Email From users WHERE id = '" + mail.IdUser + "'"))
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id From users WHERE uniq_id = '" + id + "'"))
             {
                 if (userChecker.HasRows)
                 {
-                    userChecker.Read();
-                    MailsController mailC = new MailsController();
-                    if (mailC.createMail(mail.Content, mail.IdUser, userChecker.GetString(0)).Equals("ok"))
+                    using (MySqlDataReader mailChecker = MySqlHelper.ExecuteReader(Connection, "SELECT Email From users WHERE id = '" + mail.IdUser + "'"))
                     {
-                        return Request.CreateResponse(HttpStatusCode.Created, "Mail envoyé avec succès");
-                    }
-                    else
-                    {
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, "Erreur lors de la création du mail");
+                        if (mailChecker.HasRows)
+                        {
+                            mailChecker.Read();
+                            MailsController mailC = new MailsController();
+                            if (mailC.createMail(mail.Content, mail.IdUser, mailChecker.GetString(0)).Equals("ok"))
+                            {
+                                return Request.CreateResponse(HttpStatusCode.Created, "Mail envoyé avec succès");
+                            }
+                            else
+                            {
+                                return Request.CreateResponse(HttpStatusCode.BadRequest, "Erreur lors de la création du mail");
+                            }
+                        }
+                        else
+                        {
+                            return Request.CreateResponse(HttpStatusCode.BadRequest, "Mauvais destinataire");
+                        }
                     }
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Mauvais utilisateur");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Vous n'êtes pas autorisé à envoyer un mail");
                 }
             }
         }
