@@ -20,12 +20,18 @@ namespace CodingMarketPlace
                         c.RootUrl(req => "http://codingmarketplace.apphb.com");
                         
                         c.SingleApiVersion("v1", "CodingMarketPlace");
-                        
+
+                        c.IncludeXmlComments(GetXmlCommentsPath());
                     })
                 .EnableSwaggerUi(c =>
                     {
                        
                     });
+        }
+
+        protected static string GetXmlCommentsPath()
+        {
+            return System.String.Format(@"{0}\bin\CodingMarketPlace.XML", System.AppDomain.CurrentDomain.BaseDirectory);
         }
     }
 }

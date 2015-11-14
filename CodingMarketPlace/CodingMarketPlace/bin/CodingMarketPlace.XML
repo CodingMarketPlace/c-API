@@ -4,5 +4,73 @@
         <name>CodingMarketPlace</name>
     </assembly>
     <members>
+        <member name="M:CodingMarketPlace.Controllers.UsersController.Create(CodingMarketPlace.Models.User)">
+            <summary>
+            Add new user
+            </summary>
+            <param name="user">User Model</param>
+            <remarks>Insert new user</remarks>
+            <response code="201">User successfully created</response>
+            <response code="400">Login or Email already existing in database</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.UsersController.Update(CodingMarketPlace.Models.User,System.String)">
+            <summary>
+            Update a user
+            </summary>
+            <param name="user">User Model</param>
+            <param name="id">the user id</param>
+            <remarks>Update the user sent in the body, after checking if he is the one asking it</remarks>
+            <response code="200">User successfully updated</response>
+            <response code="400">You are not the user you want to update</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.UsersController.ChangeRole(CodingMarketPlace.Models.User,System.String)">
+            <summary>
+            Change a user's role
+            </summary>
+            <param name="user">User Model</param>
+            <param name="id">the user id</param>
+            <remarks>Change roles from the user sent in the body [only usable by administrators]</remarks>
+            <response code="200">User successfully updated</response>
+            <response code="400">You are not an administrator</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.UsersController.Login(CodingMarketPlace.Models.User)">
+            <summary>
+            Ask for user login
+            </summary>
+            <param name="user">User Model</param>
+            <remarks>Try to login the user</remarks>
+            <response code="200">User successfully logged in</response>
+            <response code="400">log in failed</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.UsersController.GetAllUsers">
+            <summary>
+            Get all users
+            </summary>
+            <remarks>Get all users</remarks>
+            <response code="200">List successfully returned</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.UsersController.GetUserDetail(System.String)">
+            <summary>
+            Ask for user detail
+            </summary>
+            <param name="id">user's id</param>
+            <remarks>Get a user's detail</remarks>
+            <response code="200">Returned user's details</response>
+            <response code="400">Wrong id</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.UsersController.Delete(CodingMarketPlace.Models.User,System.String)">
+            <summary>
+            Delete a user
+            </summary>
+            <param name="user">User Model</param>
+            <param name="id">user's id</param>
+            <remarks>Delete a user after checking that you are an administrator</remarks>
+            <response code="200">User successfully deleted</response>
+            <response code="400">You are not an administrator</response>
+            <response code="500">Internal server error</response>
+        </member>
     </members>
 </doc>
