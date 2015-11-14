@@ -31,7 +31,7 @@ namespace CodingMarketPlace
 
         protected static string GetXmlCommentsPath()
         {
-            return System.String.Format(@"{0}\bin\CodingMarketPlace.XML", System.AppDomain.CurrentDomain.BaseDirectory);
+            return System.String.Format(@"{0}/bin/CodingMarketPlace.XML", System.AppDomain.CurrentDomain.BaseDirectory);
         }
     }
 }
