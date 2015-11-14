@@ -332,10 +332,10 @@ namespace CodingMarketPlace.Controllers
         }
         
         /// <summary>
-        /// Ask for user detail
+        /// Ask for user details
         /// </summary>
         /// <param name="id">user's id</param>
-        /// <remarks>Get a user's detail</remarks>
+        /// <remarks>Get a user's details</remarks>
         /// <response code="200">Returned user's details</response>
         /// <response code="400">Wrong id</response>
         [HttpGet]

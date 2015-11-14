@@ -13,6 +13,16 @@ namespace CodingMarketPlace.Controllers
 
         //Méthodes POST
 
+        /// <summary>
+        /// Send an email
+        /// </summary>
+        /// <param name="mail">Mail Model</param>
+        /// <param name="id">sender's id</param>
+        /// <remarks>Send an email after having checked that you are logged and that the recipient is one of our users</remarks>
+        /// <response code="201">Mail successfully sent</response>
+        /// <response code="400">Wrong recipient</response>
+        /// <response code="405">You are not a user</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost]
         [ActionName("Send")]
         public object Send([FromBody] Mail mail, string id)
@@ -33,7 +43,7 @@ namespace CodingMarketPlace.Controllers
                             }
                             else
                             {
-                                return Request.CreateResponse(HttpStatusCode.BadRequest, "Erreur lors de la création du mail");
+                                return Request.CreateResponse(HttpStatusCode.InternalServerError, "Erreur lors de la création du mail");
                             }
                         }
                         else
@@ -44,7 +54,7 @@ namespace CodingMarketPlace.Controllers
                 }
                 else
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Vous n'êtes pas autorisé à envoyer un mail");
+                    return Request.CreateResponse(HttpStatusCode.MethodNotAllowed, "Vous n'êtes pas autorisé à envoyer un mail");
                 }
             }
         }

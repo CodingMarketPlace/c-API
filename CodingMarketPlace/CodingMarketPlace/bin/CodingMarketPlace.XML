@@ -4,6 +4,90 @@
         <name>CodingMarketPlace</name>
     </assembly>
     <members>
+        <member name="M:CodingMarketPlace.Controllers.ContactController.Send(CodingMarketPlace.Models.Mail,System.String)">
+            <summary>
+            Send an email
+            </summary>
+            <param name="mail">Mail Model</param>
+            <param name="id">sender's id</param>
+            <remarks>Send an email after having checked that you are logged and that the recipient is one of our users</remarks>
+            <response code="201">Mail successfully sent</response>
+            <response code="400">Wrong recipient</response>
+            <response code="405">You are not a user</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.ProjectsController.Create(CodingMarketPlace.Models.Project,System.String)">
+            <summary>
+            Create a project
+            </summary>
+            <param name="project">Project Model</param>
+            <param name="id">sender's id</param>
+            <remarks>Create a project after checking that you are a project creator</remarks>
+            <response code="201">Project successfully created</response>
+            <response code="400">You are not a project creator</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.ProjectsController.Update(CodingMarketPlace.Models.Project,System.String)">
+            <summary>
+            Update a project
+            </summary>
+            <param name="project">Project Model</param>
+            <param name="id">sender's id</param>
+            <remarks>Update the project after checking that you are the project owner</remarks>
+            <response code="201">Project successfully updated</response>
+            <response code="400">You are not the owner</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.ProjectsController.ApplyToProject(CodingMarketPlace.Models.Project,System.String)">
+            <summary>
+            Apply to a project
+            </summary>
+            <param name="project">Project Model</param>
+            <param name="id">sender's id</param>
+            <remarks>Add a developper to a project</remarks>
+            <response code="201">Inscription to project successful</response>
+            <response code="400">You are not a developper</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.ProjectsController.Validate(CodingMarketPlace.Models.Project,System.String)">
+            <summary>
+            Validate a project
+            </summary>
+            <param name="project">Project Model</param>
+            <param name="id">sender's id</param>
+            <remarks>Link a project to a developper then lock it, after having checked that you are the project owner</remarks>
+            <response code="200">Project successfully validated</response>
+            <response code="400">You are not the owner</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.ProjectsController.getAllProjects">
+            <summary>
+            Get all projects
+            </summary>
+            <remarks>Get all projects</remarks>
+            <response code="200">List successfully returned</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.ProjectsController.GetProjectDetail(System.String)">
+            <summary>
+            Ask for project details
+            </summary>
+            <param name="id">project's id</param>
+            <remarks>Get a project's details</remarks>
+            <response code="200">Returned project's details</response>
+            <response code="400">Wrong id</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.ProjectsController.Delete(CodingMarketPlace.Models.User,System.String)">
+            <summary>
+            Delete a project
+            </summary>
+            <param name="user">Project Model</param>
+            <param name="id">user's id</param>
+            <remarks>Delete a project after checking that you are an administrator</remarks>
+            <response code="200">Project successfully deleted</response>
+            <response code="400">You are not an administrator</response>
+            <response code="500">Internal server error</response>
+        </member>
         <member name="M:CodingMarketPlace.Controllers.UsersController.Create(CodingMarketPlace.Models.User)">
             <summary>
             Add new user
@@ -54,10 +138,10 @@
         </member>
         <member name="M:CodingMarketPlace.Controllers.UsersController.GetUserDetail(System.String)">
             <summary>
-            Ask for user detail
+            Ask for user details
             </summary>
             <param name="id">user's id</param>
-            <remarks>Get a user's detail</remarks>
+            <remarks>Get a user's details</remarks>
             <response code="200">Returned user's details</response>
             <response code="400">Wrong id</response>
         </member>

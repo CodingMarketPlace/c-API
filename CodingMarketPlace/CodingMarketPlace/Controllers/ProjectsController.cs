@@ -15,6 +15,15 @@ namespace CodingMarketPlace.Controllers
 
         //Méthodes POST
 
+        /// <summary>
+        /// Create a project
+        /// </summary>
+        /// <param name="project">Project Model</param>
+        /// <param name="id">sender's id</param>
+        /// <remarks>Create a project after checking that you are a project creator</remarks>
+        /// <response code="201">Project successfully created</response>
+        /// <response code="400">You are not a project creator</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost]
         [ActionName("Create")]
         public object Create([FromBody] Project project, string id)
@@ -49,9 +58,18 @@ namespace CodingMarketPlace.Controllers
                     }
                 }
             }
-            return Request.CreateResponse(HttpStatusCode.BadRequest, "Error, project could not be created");
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error, project could not be created");
         }
 
+        /// <summary>
+        /// Update a project
+        /// </summary>
+        /// <param name="project">Project Model</param>
+        /// <param name="id">sender's id</param>
+        /// <remarks>Update the project after checking that you are the project owner</remarks>
+        /// <response code="201">Project successfully updated</response>
+        /// <response code="400">You are not the owner</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost]
         [ActionName("Update")]
         public object Update([FromBody] Project project, string id)
@@ -143,9 +161,18 @@ namespace CodingMarketPlace.Controllers
                     }
                 }
             }
-            return Request.CreateResponse(HttpStatusCode.BadRequest, "Error");
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error");
         }
 
+        /// <summary>
+        /// Apply to a project
+        /// </summary>
+        /// <param name="project">Project Model</param>
+        /// <param name="id">sender's id</param>
+        /// <remarks>Add a developper to a project</remarks>
+        /// <response code="201">Inscription to project successful</response>
+        /// <response code="400">You are not a developper</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost]
         [ActionName("Apply")]
         public object ApplyToProject([FromBody] Project project, string id)
@@ -164,7 +191,7 @@ namespace CodingMarketPlace.Controllers
                         }
                         else
                         {
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, "Error, inscription to project denied");
+                            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error, inscription to project denied");
                         }
                     }
                     else
@@ -173,9 +200,18 @@ namespace CodingMarketPlace.Controllers
                     }
                 }
             }
-            return Request.CreateResponse(HttpStatusCode.BadRequest, "Error, could not proceed to inscription");
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error, could not proceed to inscription");
         }
 
+        /// <summary>
+        /// Validate a project
+        /// </summary>
+        /// <param name="project">Project Model</param>
+        /// <param name="id">sender's id</param>
+        /// <remarks>Link a project to a developper then lock it, after having checked that you are the project owner</remarks>
+        /// <response code="200">Project successfully validated</response>
+        /// <response code="400">You are not the owner</response>
+        /// <response code="500">Internal server error</response>
         [HttpPost]
         [ActionName("Validate")]
         public object Validate([FromBody] Project project, string id)
@@ -195,7 +231,7 @@ namespace CodingMarketPlace.Controllers
                         }
                         else
                         {
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, "Project could not be validated");
+                            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Project could not be validated");
                         }
                     }
                     else
@@ -204,11 +240,17 @@ namespace CodingMarketPlace.Controllers
                     }
                 }
             }
-            return Request.CreateResponse(HttpStatusCode.BadRequest, "Error, could not proceed to validation");
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error, could not proceed to validation");
         }
 
         //Méthodes GET
 
+        /// <summary>
+        /// Get all projects
+        /// </summary>
+        /// <remarks>Get all projects</remarks>
+        /// <response code="200">List successfully returned</response>
+        /// <response code="500">Internal server error</response>
         [HttpGet]
         [ActionName("All")]
         public object getAllProjects()
@@ -230,11 +272,19 @@ namespace CodingMarketPlace.Controllers
                         project.CreationDate = reader.GetDateTime(6);
                         projects.Add(project);
                     }
+                    return Request.CreateResponse(HttpStatusCode.OK, projects);
                 }
             }
-            return Request.CreateResponse(HttpStatusCode.OK, projects);
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Internal server error");
         }
 
+        /// <summary>
+        /// Ask for project details
+        /// </summary>
+        /// <param name="id">project's id</param>
+        /// <remarks>Get a project's details</remarks>
+        /// <response code="200">Returned project's details</response>
+        /// <response code="400">Wrong id</response>
         [HttpGet]
         [ActionName("Detail")]
         public object GetProjectDetail(string id)
@@ -263,11 +313,20 @@ namespace CodingMarketPlace.Controllers
 
         //Méthodes DELETE
 
+        /// <summary>
+        /// Delete a project
+        /// </summary>
+        /// <param name="user">Project Model</param>
+        /// <param name="id">user's id</param>
+        /// <remarks>Delete a project after checking that you are an administrator</remarks>
+        /// <response code="200">Project successfully deleted</response>
+        /// <response code="400">You are not an administrator</response>
+        /// <response code="500">Internal server error</response>
         [HttpDelete]
         [ActionName("Delete")]
         public object Delete([FromBody] User user, string id)
         {
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Admin FROM users WHERE uniq_id = '" + id + "'"))
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Admin FROM users WHERE uniq_id = '" + user.UniqId + "'"))
             {
                 if (reader.HasRows)
                 {
@@ -284,7 +343,7 @@ namespace CodingMarketPlace.Controllers
                     }
                 }
             }
-            return Request.CreateResponse(HttpStatusCode.BadRequest, "Deletion error");
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Deletion error");
         }
     }
 }
