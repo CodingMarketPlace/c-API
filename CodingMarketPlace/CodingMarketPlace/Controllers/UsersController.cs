@@ -1,19 +1,24 @@
 ﻿using CodingMarketPlace.Models;
 using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace CodingMarketPlace.Controllers
 {
     public class UsersController : ApiController
     {
         private const string RivestShamirAdlemanKey = "<RSAKeyValue><Modulus>o1V/G/65iGcISEuln5n8L6YdHbxAYT05KRjLDzEIO1Wkl/fDqQDT9MNI13MUJzNGEgzXb8FEziGAXB9wdM221aP4Q6o7CAJNxuctsMCKXHwD6M+IHxAQs41Jf86zv3AGiB1yqLI3BsjrwuOIr91vkyczfhtb+qe72JQbw25yOiU=</Modulus><Exponent>AQAB</Exponent><P>2BzeAwoZw6uAGW2BVGMIS60qjijEMaZ39IgjFCwr6VX+goKUNI/wZrkdDS1t+ZMRKapcGx2Y5gZsmZLCyOtxAQ==</P><Q>wXrhChqKniRNSnaf4Spxe41gdxyuphSOAMCrlZRcP26UIrBH6f/tanC49VZr+8R2Gi1765MNJ4ih0VEiQ1XlJQ==</Q><DP>DvbgwKEga5YihqA4hlldJ7BT9AgKnc2DHOGYXDs6xyt3Nh5ImOMmqFZFFraAmPmABLyRKCeCgNsNBg1Ng5AaAQ==</DP><DQ>g2dPO6t3BZymGbKjNyu6Uy1bnMoQG5/OKdixMC/IzxPs6/pJfTViK25PT+DYCfAOPg0yInaG8pirPhwaZx0JOQ==</DQ><InverseQ>T6txQ7LSrNlKE936S2KnQE3OTTCCtlW9EsoWAh2anWlmiIi0LCrv16nTlY7NU4kh78JomDDm2Ozoi9Trb4lb3Q==</InverseQ><D>JXqbm3Koo6BS0fYLx/L3X36sTTOyiS2ZhXDjPXXol+bnyRhJHSlruY0rFIcbT4BwOnmYYNQ2I9+jmt/6985xfrfv3FZIei1sYroJweaobyQBVeRwxqB5pocL15otNhjDjZ5dc2XJNHkflmmu6J+kjuvJjrNM+jGTiAMLxxt8cQE=</D></RSAKeyValue>";
+
+        private const string mySecretKey = "6LfeEBETAAAAAI22_20AwjtKh-wBPA6mm-XeeEH2";
 
         private string Connection = Globals.ConnectionString;
 
@@ -403,5 +408,49 @@ namespace CodingMarketPlace.Controllers
             return Request.CreateResponse(HttpStatusCode.InternalServerError, "Deletion error");
         }
 
+        //Check Recaptcha
+        [HttpPost]
+        [ActionName("Register")]
+        [ApiExplorerSettings(IgnoreApi=true)]
+        public object Register(string g_recaptcha_response)
+        {
+            string responseFromServer = "";
+            WebRequest request = WebRequest.Create("https://www.google.com/recaptcha/api/siteverify?secret=" + mySecretKey + "&response=" + g_recaptcha_response);
+            request.Method = "GET";
+            using (WebResponse response = request.GetResponse())
+            {
+                using (Stream stream = response.GetResponseStream())
+                {
+                    StreamReader reader = new StreamReader(stream);
+                    responseFromServer = reader.ReadToEnd();
+                }
+            }
+
+            if (responseFromServer != "")
+            {
+                bool isSuccess = false;
+                Dictionary<string, string> values = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseFromServer);
+                foreach (var item in values)
+                {
+                    if (item.Key == "success" && item.Value == "True")
+                    {
+                        isSuccess = true;
+                        break;
+                    }
+                }
+
+                if (isSuccess)
+                {
+                    Console.WriteLine("All is okay");
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, "Could not identify");
+                }
+
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, "Well identified");
+        }
     }
 }
