@@ -248,15 +248,61 @@ namespace CodingMarketPlace.Controllers
         /// <summary>
         /// Get all projects
         /// </summary>
+        /// <param name="id">text to check</param>
         /// <remarks>Get all projects</remarks>
         /// <response code="200">List successfully returned</response>
         /// <response code="500">Internal server error</response>
         [HttpGet]
         [ActionName("All")]
-        public object getAllProjects()
+        public object getAllProjects(string id)
         {
             List<Project> projects = new List<Project>();
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects"))
+            
+            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects";
+
+            if (id.Equals("") == false)
+            {
+                query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects WHERE title = '" + id + "' OR description LIKE '%" + id + "%'";
+            }
+
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, query))
+            {
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        Project project = new Project();
+                        project.Title = reader.GetString(0);
+                        project.Description = reader.GetString(1);
+                        project.Duration = reader.GetInt32(2);
+                        project.Budget = reader.GetInt32(3);
+                        project.IdUser = reader.GetInt32(4);
+                        project.ImageUrl = reader.GetString(5);
+                        project.CreationDate = reader.GetDateTime(6);
+                        projects.Add(project);
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, projects);
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Internal server error");
+        }
+
+        /// <summary>
+        /// Get all projects
+        /// </summary>
+        /// <param name="id">user id</param>
+        /// <remarks>Get all projects for a user</remarks>
+        /// <response code="200">List successfully returned</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet]
+        [ActionName("AllForUser")]
+        public object getAllProjectsForUser(string id)
+        {
+            List<Project> projects = new List<Project>();
+
+            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects where id_user = '" + id + "'";
+
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, query))
             {
                 if (reader.HasRows)
                 {
