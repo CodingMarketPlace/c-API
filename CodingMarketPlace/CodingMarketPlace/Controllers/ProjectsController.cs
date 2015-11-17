@@ -300,7 +300,18 @@ namespace CodingMarketPlace.Controllers
         {
             List<Project> projects = new List<Project>();
 
-            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects where id_user = '" + id + "'";
+            string theId = "";
+
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM users WHERE uniq_id = '" + id +"'"))
+            {
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    theId = reader.GetInt32(0).ToString();
+                }
+            }
+
+            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects where id_user = '" + theId + "'";
 
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, query))
             {
