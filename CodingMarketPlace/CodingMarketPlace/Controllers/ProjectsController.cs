@@ -288,7 +288,7 @@ namespace CodingMarketPlace.Controllers
         }
 
         /// <summary>
-        /// Get all projects
+        /// Get all projects for a user
         /// </summary>
         /// <param name="id">user id</param>
         /// <remarks>Get all projects for a user</remarks>

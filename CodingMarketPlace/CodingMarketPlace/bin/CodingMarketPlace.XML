@@ -16,6 +16,24 @@
             <response code="405">You are not a user</response>
             <response code="500">Internal server error</response>
         </member>
+        <member name="M:CodingMarketPlace.Controllers.NotificationsController.getAllNotificationsForUser(System.String)">
+            <summary>
+            Get all notifications for a user
+            </summary>
+            <param name="id">user id</param>
+            <remarks>Get all notifications for a user</remarks>
+            <response code="200">List successfully returned</response>
+            <response code="500">Internal server error</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.NotificationsController.setAllNotificationsReadForUser(System.String)">
+            <summary>
+            Set all notifications to read for a user
+            </summary>
+            <param name="id">user id</param>
+            <remarks>Set all notifications to read for a user</remarks>
+            <response code="200">List successfully updated</response>
+            <response code="500">Internal server error</response>
+        </member>
         <member name="M:CodingMarketPlace.Controllers.ProjectsController.Create(CodingMarketPlace.Models.Project,System.String)">
             <summary>
             Create a project
@@ -71,7 +89,7 @@
         </member>
         <member name="M:CodingMarketPlace.Controllers.ProjectsController.getAllProjectsForUser(System.String)">
             <summary>
-            Get all projects
+            Get all projects for a user
             </summary>
             <param name="id">user id</param>
             <remarks>Get all projects for a user</remarks>
