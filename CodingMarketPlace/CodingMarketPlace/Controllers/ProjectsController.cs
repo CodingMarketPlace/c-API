@@ -258,12 +258,44 @@ namespace CodingMarketPlace.Controllers
         {
             List<Project> projects = new List<Project>();
             
-            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects";
+            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects WHERE title = '" + id + "' OR description LIKE '%" + id + "%'";
 
-            if (id.Equals("") == false)
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, query))
             {
-                query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects WHERE title = '" + id + "' OR description LIKE '%" + id + "%'";
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        Project project = new Project();
+                        project.Title = reader.GetString(0);
+                        project.Description = reader.GetString(1);
+                        project.Duration = reader.GetInt32(2);
+                        project.Budget = reader.GetInt32(3);
+                        project.IdUser = reader.GetInt32(4);
+                        project.ImageUrl = reader.GetString(5);
+                        project.CreationDate = reader.GetDateTime(6);
+                        projects.Add(project);
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, projects);
+                }
             }
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Internal server error");
+        }
+
+        /// <summary>
+        /// Get all projects
+        /// </summary>
+        /// <param name="id">text to check</param>
+        /// <remarks>Get all projects</remarks>
+        /// <response code="200">List successfully returned</response>
+        /// <response code="500">Internal server error</response>
+        [HttpGet]
+        [ActionName("All")]
+        public object getAllProjects()
+        {
+            List<Project> projects = new List<Project>();
+
+            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects";
 
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, query))
             {
