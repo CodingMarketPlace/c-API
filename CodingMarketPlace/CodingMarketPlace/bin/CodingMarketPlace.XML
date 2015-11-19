@@ -210,6 +210,15 @@
             <response code="200">Returned user's projects</response>
             <response code="400">Wrong id</response>
         </member>
+        <member name="M:CodingMarketPlace.Controllers.UsersController.ForgottenPass(System.String)">
+            <summary>
+            Send an email to restore password
+            </summary>
+            <param name="id">user's email</param>
+            <remarks>Send an email to restore password</remarks>
+            <response code="200">Email with link</response>
+            <response code="400">Wrong id</response>
+        </member>
         <member name="M:CodingMarketPlace.Controllers.UsersController.Delete(CodingMarketPlace.Models.User,System.String)">
             <summary>
             Delete a user
