@@ -123,7 +123,7 @@ namespace CodingMarketPlace.Controllers
                         {
                             if (mailChecker.HasRows)
                             {
-                                return Request.CreateResponse(HttpStatusCode.BadRequest, "Email already exist");
+                                //return Request.CreateResponse(HttpStatusCode.BadRequest, "Email already exist");
                             }
                         }
                         cptPointsToUpdate++;
