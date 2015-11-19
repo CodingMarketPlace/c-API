@@ -8,7 +8,7 @@ namespace CodingMarketPlace.Models
     public class Notification
     {
         public int Id { get; set; }
-        public int UniqId { get; set; }
+        public string UniqId { get; set; }
         public string Text { get; set; }
         public bool Read { get; set; }
     }

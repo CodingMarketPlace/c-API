@@ -12,8 +12,9 @@ namespace CodingMarketPlace.Models
         public string Description { get; set; }
         public int Duration { get; set; }
         public float Budget { get; set; }
-        public int IdUser { get; set; }
+        public string IdUser { get; set; }
         public string ImageUrl { get; set; }
         public DateTime CreationDate { get; set; }
+        public bool over { get; set; }
     }
 }

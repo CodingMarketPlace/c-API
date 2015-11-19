@@ -45,7 +45,7 @@ namespace CodingMarketPlace.Controllers
                         parms.Add(new MySqlParameter("description", project.Description));
                         parms.Add(new MySqlParameter("duration", project.Duration));
                         parms.Add(new MySqlParameter("budget", project.Budget));
-                        parms.Add(new MySqlParameter("id_user", userChecker.GetInt32(1)));
+                        parms.Add(new MySqlParameter("id_user", id));
                         parms.Add(new MySqlParameter("image_url", project.ImageUrl));
                         parms.Add(new MySqlParameter("creation_date", localDate));
 
@@ -79,7 +79,7 @@ namespace CodingMarketPlace.Controllers
                 if (userChecker.HasRows)
                 {
                     userChecker.Read();
-                    if (userChecker.GetInt32(0) == project.IdUser)
+                    if (id == project.IdUser)
                     {
                         int cptPointsToUpdate = 0;
                         if (project.Title != "")
@@ -216,12 +216,12 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Validate")]
         public object Validate([FromBody] Project project, string id)
         {
-            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id From users WHERE uniq_id = '" + id + "'"))
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT uniq_id From users WHERE uniq_id = '" + project.IdUser + "'"))
             {
                 if (userChecker.HasRows)
                 {
                     userChecker.Read();
-                    if (userChecker.GetInt32(0) == project.IdUser)
+                    if (userChecker.GetString(0) == project.IdUser)
                     {
                         InscriptionsController insc = new InscriptionsController();
                         if (insc.validateInscription(project, id).Equals("ok"))
@@ -258,7 +258,7 @@ namespace CodingMarketPlace.Controllers
         {
             List<Project> projects = new List<Project>();
             
-            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects WHERE title = '" + id + "' OR description LIKE '%" + id + "%'";
+            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date, id, over From projects WHERE title = '" + id + "' OR description LIKE '%" + id + "%'";
 
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, query))
             {
@@ -271,9 +271,11 @@ namespace CodingMarketPlace.Controllers
                         project.Description = reader.GetString(1);
                         project.Duration = reader.GetInt32(2);
                         project.Budget = reader.GetInt32(3);
-                        project.IdUser = reader.GetInt32(4);
+                        project.IdUser = reader.GetString(4);
                         project.ImageUrl = reader.GetString(5);
                         project.CreationDate = reader.GetDateTime(6);
+                        project.Id = reader.GetInt32(7);
+                        project.over = reader.GetBoolean(8);
                         projects.Add(project);
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, projects);
@@ -295,7 +297,7 @@ namespace CodingMarketPlace.Controllers
         {
             List<Project> projects = new List<Project>();
 
-            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects";
+            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date, id, over From projects";
 
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, query))
             {
@@ -308,9 +310,11 @@ namespace CodingMarketPlace.Controllers
                         project.Description = reader.GetString(1);
                         project.Duration = reader.GetInt32(2);
                         project.Budget = reader.GetInt32(3);
-                        project.IdUser = reader.GetInt32(4);
+                        project.IdUser = reader.GetString(4);
                         project.ImageUrl = reader.GetString(5);
                         project.CreationDate = reader.GetDateTime(6);
+                        project.Id = reader.GetInt32(7);
+                        project.over = reader.GetBoolean(8);
                         projects.Add(project);
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, projects);
@@ -332,18 +336,7 @@ namespace CodingMarketPlace.Controllers
         {
             List<Project> projects = new List<Project>();
 
-            string theId = "";
-
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM users WHERE uniq_id = '" + id +"'"))
-            {
-                if (reader.HasRows)
-                {
-                    reader.Read();
-                    theId = reader.GetInt32(0).ToString();
-                }
-            }
-
-            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects where id_user = '" + theId + "'";
+            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date, id, over From projects where id_user = " + id + "";
 
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, query))
             {
@@ -356,9 +349,11 @@ namespace CodingMarketPlace.Controllers
                         project.Description = reader.GetString(1);
                         project.Duration = reader.GetInt32(2);
                         project.Budget = reader.GetInt32(3);
-                        project.IdUser = reader.GetInt32(4);
+                        project.IdUser = reader.GetString(4);
                         project.ImageUrl = reader.GetString(5);
                         project.CreationDate = reader.GetDateTime(6);
+                        project.Id = reader.GetInt32(7);
+                        project.over = reader.GetBoolean(8);
                         projects.Add(project);
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, projects);
@@ -379,7 +374,7 @@ namespace CodingMarketPlace.Controllers
         public object GetProjectDetail(string id)
         {
             Project response = new Project();
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT title, description, duration, budget, id_user, image_url, creation_date From projects WHERE id = " + id))
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT title, description, duration, budget, id_user, image_url, creation_date, over From projects WHERE id = " + id))
             {
                 if (reader.HasRows)
                 {
@@ -388,9 +383,11 @@ namespace CodingMarketPlace.Controllers
                     response.Description = reader.GetString(1);
                     response.Duration = reader.GetInt32(2);
                     response.Budget = reader.GetInt32(3);
-                    response.IdUser = reader.GetInt32(4);
+                    response.IdUser = reader.GetString(4);
                     response.ImageUrl = reader.GetString(5);
                     response.CreationDate = reader.GetDateTime(6);
+                    response.Id = Int32.Parse(id);
+                    response.over = reader.GetBoolean(7);
                     return Request.CreateResponse(HttpStatusCode.OK, response);
                 }
                 else

@@ -28,18 +28,7 @@ namespace CodingMarketPlace.Controllers
         {
             List<Notification> notifications = new List<Notification>();
 
-            string theId = "";
-
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM users WHERE uniq_id = '" + id + "'"))
-            {
-                if (reader.HasRows)
-                {
-                    reader.Read();
-                    theId = reader.GetInt32(0).ToString();
-                }
-            }
-
-            string query = "SELECT id_user, texte, already_read From notifications where id_user = '" + theId + "'";
+            string query = "SELECT id_user, texte, already_read From notifications where id_user = '" + id + "'";
 
             using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, query))
             {
@@ -48,7 +37,7 @@ namespace CodingMarketPlace.Controllers
                     while (reader.Read())
                     {
                         Notification notification = new Notification();
-                        notification.UniqId = reader.GetInt32(0);
+                        notification.UniqId = reader.GetString(0);
                         notification.Text = reader.GetString(1);
                         notification.Read = reader.GetBoolean(2);
                         notifications.Add(notification);
@@ -72,18 +61,7 @@ namespace CodingMarketPlace.Controllers
         {
             List<Notification> notifications = new List<Notification>();
 
-            string theId = "";
-
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM users WHERE uniq_id = '" + id + "'"))
-            {
-                if (reader.HasRows)
-                {
-                    reader.Read();
-                    theId = reader.GetInt32(0).ToString();
-                }
-            }
-
-            string query = "UPDATE notifications SET already_read = 1 WHERE id_user = '" + theId + "'";
+            string query = "UPDATE notifications SET already_read = 1 WHERE id_user = '" + id + "'";
 
             MySqlHelper.ExecuteNonQuery(Connection, query);
 
@@ -106,7 +84,7 @@ namespace CodingMarketPlace.Controllers
 
                         // Create the parameters
                         List<MySqlParameter> parms = new List<MySqlParameter>();
-                        parms.Add(new MySqlParameter("userId", userChecker.GetInt32(0)));
+                        parms.Add(new MySqlParameter("userId", notif.UniqId));
                         parms.Add(new MySqlParameter("text", notif.Text));
 
                         MySqlHelper.ExecuteNonQuery(Connection, query, parms.ToArray());

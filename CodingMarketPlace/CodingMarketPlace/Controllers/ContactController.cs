@@ -31,13 +31,13 @@ namespace CodingMarketPlace.Controllers
             {
                 if (userChecker.HasRows)
                 {
-                    using (MySqlDataReader mailChecker = MySqlHelper.ExecuteReader(Connection, "SELECT Email From users WHERE id = '" + mail.IdUser + "'"))
+                    using (MySqlDataReader mailChecker = MySqlHelper.ExecuteReader(Connection, "SELECT Email, uniq_id From users WHERE uniq_id = '" + mail.IdUser + "'"))
                     {
                         if (mailChecker.HasRows)
                         {
                             mailChecker.Read();
                             MailsController mailC = new MailsController();
-                            if (mailC.createMail(mail.Content, mail.IdUser, mailChecker.GetString(0)).Equals("ok"))
+                            if (mailC.createMail(mail.Content, mailChecker.GetString(1), mailChecker.GetString(0)).Equals("ok"))
                             {
                                 return Request.CreateResponse(HttpStatusCode.Created, "Mail envoyé avec succès");
                             }

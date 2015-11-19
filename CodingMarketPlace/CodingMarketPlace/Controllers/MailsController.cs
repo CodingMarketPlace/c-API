@@ -15,7 +15,7 @@ namespace CodingMarketPlace.Controllers
 
         private string Connection = Globals.ConnectionString;
 
-        public string createMail(string content, int id, string contactMailAddress)
+        public string createMail(string content, string id, string contactMailAddress)
         {
             string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
 
