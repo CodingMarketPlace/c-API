@@ -243,6 +243,40 @@ namespace CodingMarketPlace.Controllers
             return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error, could not proceed to validation");
         }
 
+        /// <summary>
+        /// Fnish a project
+        /// </summary>
+        /// <param name="project">Project Model</param>
+        /// <param name="id">sender's id</param>
+        /// <remarks>Fnish a project</remarks>
+        /// <response code="201">project successfully updated</response>
+        /// <response code="500">Internal server error</response>
+        [HttpPost]
+        [ActionName("Finish")]
+        public object FinishProject([FromBody] Project project, string id)
+        {
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id From users WHERE uniq_id = '" + id + "'"))
+            {
+                if (userChecker.HasRows)
+                {
+                    userChecker.Read();
+                    if (id == project.IdUser)
+                    {
+                        string query = "UPDATE projects SET over = true WHERE id = '" + project.Id + "'";
+
+                        MySqlHelper.ExecuteNonQuery(Connection, query);
+
+                        return Request.CreateResponse(HttpStatusCode.OK);
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "You are not the project owner");
+                    }
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error");
+        }
+
         //Méthodes GET
 
         /// <summary>
@@ -397,6 +431,54 @@ namespace CodingMarketPlace.Controllers
             }
         }
 
+        /// <summary>
+        /// Get the users that applied to a project
+        /// </summary>
+        /// <param name="id">project id</param>
+        /// <remarks>Get the users that applied to a project</remarks>
+        /// <response code="200">Returned list of users</response>
+        /// <response code="400">Wrong id</response>
+        [HttpGet]
+        [ActionName("UsersApplied")]
+        public object GetUsersThatApplied(string id)
+        {
+            using (MySqlDataReader inscriptionGetter = MySqlHelper.ExecuteReader(Connection, "SELECT id_user From inscriptions WHERE id_project = " + id))
+            {
+                if (inscriptionGetter.HasRows)
+                {
+                    List<User> users = new List<User>();
+                    while (inscriptionGetter.Read())
+                    {
+                        string theId = inscriptionGetter.GetString(0);
+                        using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Password, Login, Email, Uniq_id, Activated, Developper, Project_creator, first_name, last_name, admin, description, image_Url From users WHERE uniq_id = '" + theId + "'"))
+                        {
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    User user = new User();
+                                    user.Login = reader.GetString(1);
+                                    user.Email = reader.GetString(2);
+                                    user.UniqId = reader.GetString(3);
+                                    user.Activated = reader.GetBoolean(4);
+                                    user.Developper = reader.GetBoolean(5);
+                                    user.ProjectCreator = reader.GetBoolean(6);
+                                    user.FirstName = reader.GetString(7);
+                                    user.LastName = reader.GetString(8);
+                                    user.Admin = reader.GetBoolean(9);
+                                    user.Description = reader.GetString(10);
+                                    user.ImageUrl = reader.GetString(11);
+                                    users.Add(user);
+                                }
+                            }
+                        }
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, users);
+                }
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "wrong id");
+            }
+        }
+
         //Méthodes DELETE
 
         /// <summary>
@@ -421,7 +503,13 @@ namespace CodingMarketPlace.Controllers
                     {
                         string query = "DELETE FROM projects where id = " + id;
                         MySqlHelper.ExecuteNonQuery(Connection, query);
-                        return Request.CreateResponse(HttpStatusCode.OK, "Project deleted successfully");
+
+                        string deleteQuery = "DELETE FROM inscriptions where id_project = " + id;
+                        MySqlHelper.ExecuteNonQuery(Connection, query);
+
+                        HttpRequestMessage requete = new HttpRequestMessage();
+
+                        return requete.CreateResponse(HttpStatusCode.OK, "Project deleted successfully");
                     }
                     else
                     {
@@ -430,6 +518,27 @@ namespace CodingMarketPlace.Controllers
                 }
             }
             return Request.CreateResponse(HttpStatusCode.InternalServerError, "Deletion error");
+        }
+
+        public void DeleteForUser([FromBody] User user, string id)
+        {
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Admin FROM users WHERE uniq_id = '" + user.UniqId + "'"))
+            {
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    if (reader.GetBoolean(0) == true)
+                    {
+                        string query = "DELETE FROM projects where id = " + id;
+                        MySqlHelper.ExecuteNonQuery(Connection, query);
+
+                        string deleteQuery = "DELETE FROM inscriptions where id_project = " + id;
+                        MySqlHelper.ExecuteNonQuery(Connection, query);
+
+                        HttpRequestMessage requete = new HttpRequestMessage();
+                    }
+                }
+            }
         }
     }
 }

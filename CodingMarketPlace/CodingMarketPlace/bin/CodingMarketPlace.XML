@@ -78,6 +78,16 @@
             <response code="400">You are not the owner</response>
             <response code="500">Internal server error</response>
         </member>
+        <member name="M:CodingMarketPlace.Controllers.ProjectsController.FinishProject(CodingMarketPlace.Models.Project,System.String)">
+            <summary>
+            Fnish a project
+            </summary>
+            <param name="project">Project Model</param>
+            <param name="id">sender's id</param>
+            <remarks>Fnish a project</remarks>
+            <response code="201">project successfully updated</response>
+            <response code="500">Internal server error</response>
+        </member>
         <member name="M:CodingMarketPlace.Controllers.ProjectsController.getAllProjects(System.String)">
             <summary>
             Get all projects
@@ -112,6 +122,15 @@
             <param name="id">project's id</param>
             <remarks>Get a project's details</remarks>
             <response code="200">Returned project's details</response>
+            <response code="400">Wrong id</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.ProjectsController.GetUsersThatApplied(System.String)">
+            <summary>
+            Get the users that applied to a project
+            </summary>
+            <param name="id">project id</param>
+            <remarks>Get the users that applied to a project</remarks>
+            <response code="200">Returned list of users</response>
             <response code="400">Wrong id</response>
         </member>
         <member name="M:CodingMarketPlace.Controllers.ProjectsController.Delete(CodingMarketPlace.Models.User,System.String)">
@@ -180,6 +199,15 @@
             <param name="id">user's id</param>
             <remarks>Get a user's details</remarks>
             <response code="200">Returned user's details</response>
+            <response code="400">Wrong id</response>
+        </member>
+        <member name="M:CodingMarketPlace.Controllers.UsersController.GetUserProjects(System.String)">
+            <summary>
+            Ask for user projects
+            </summary>
+            <param name="id">user's id</param>
+            <remarks>Get a user's projects</remarks>
+            <response code="200">Returned user's projects</response>
             <response code="400">Wrong id</response>
         </member>
         <member name="M:CodingMarketPlace.Controllers.UsersController.Delete(CodingMarketPlace.Models.User,System.String)">

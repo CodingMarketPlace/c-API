@@ -267,7 +267,7 @@ namespace CodingMarketPlace.Controllers
         public object Login([FromBody] User user)
         {
             User response = new User();
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Password, Login, Email, Uniq_id, Activated, Developper, Project_creator, first_name, last_name, admin, description, image_Url From users WHERE login = '" + user.Login + "'"))
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Password, Login, Email, Uniq_id, Activated, Developper, Project_creator, first_name, last_name, admin, description, image_Url From users WHERE login = '" + user.Login + "' OR email = '" + user.Login + "'"))
             {
                 if (reader.HasRows)
                 {
@@ -373,6 +373,52 @@ namespace CodingMarketPlace.Controllers
             }
         }
 
+        /// <summary>
+        /// Ask for user projects
+        /// </summary>
+        /// <param name="id">user's id</param>
+        /// <remarks>Get a user's projects</remarks>
+        /// <response code="200">Returned user's projects</response>
+        /// <response code="400">Wrong id</response>
+        [HttpGet]
+        [ActionName("ApplyedTo")]
+        public object GetUserProjects(string id)
+        {
+            using (MySqlDataReader projectGetter = MySqlHelper.ExecuteReader(Connection, "SELECT id_project From inscriptions WHERE id_user = " + id))
+            {
+                if (projectGetter.HasRows)
+                {
+                    List<Project> projects = new List<Project>();
+                    while (projectGetter.Read())
+                    {
+                        int theId = projectGetter.GetInt32(0);
+                        using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT title, description, duration, budget, id_user, image_url, creation_date, over, id From projects WHERE id = " + theId))
+                        {
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    Project project = new Project();
+                                    project.Title = reader.GetString(0);
+                                    project.Description = reader.GetString(1);
+                                    project.Duration = reader.GetInt32(2);
+                                    project.Budget = reader.GetInt32(3);
+                                    project.IdUser = reader.GetString(4);
+                                    project.ImageUrl = reader.GetString(5);
+                                    project.CreationDate = reader.GetDateTime(6);
+                                    project.over = reader.GetBoolean(7);
+                                    project.Id = reader.GetInt32(8);
+                                    projects.Add(project);
+                                }
+                            }
+                        }
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, projects);
+                }
+                return Request.CreateResponse(HttpStatusCode.BadRequest, "wrong id");
+            }
+        }
+
         //Méthodes DELETE
 
         /// <summary>
@@ -397,6 +443,21 @@ namespace CodingMarketPlace.Controllers
                     {
                         string query = "DELETE FROM users where uniq_id = '" + user.UniqId + "'";
                         MySqlHelper.ExecuteNonQuery(Connection, query);
+
+                        using (MySqlDataReader projectChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id FROM projects WHERE id_user = '" + user.UniqId + "'"))
+                        {
+                            if (projectChecker.HasRows)
+                            {
+                                ProjectsController pCtl = new ProjectsController();
+                                User admin = new User();
+                                admin.UniqId = id;
+                                while(projectChecker.Read())
+                                {
+                                    pCtl.DeleteForUser(admin, projectChecker.GetInt32(0).ToString());
+                                }
+                            }
+                        }
+
                         return Request.CreateResponse(HttpStatusCode.OK, "User deleted successfully");
                     }
                     else
