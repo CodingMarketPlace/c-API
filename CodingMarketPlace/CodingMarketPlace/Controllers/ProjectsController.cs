@@ -177,7 +177,7 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Apply")]
         public object ApplyToProject([FromBody] Project project, string id)
         {
-            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT developper From users WHERE uniq_id = '" + id + "'"))
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT developper, Email From users WHERE uniq_id = '" + id + "'"))
             {
                 if (userChecker.HasRows)
                 {
@@ -187,6 +187,24 @@ namespace CodingMarketPlace.Controllers
                         InscriptionsController insc = new InscriptionsController();
                         if (insc.createInscription(project, id).Equals("ok"))
                         {
+                            using (MySqlDataReader projectChecker = MySqlHelper.ExecuteReader(Connection, "SELECT title From projects WHERE id = '" + project.Id + "'"))
+                            {
+                                if (projectChecker.HasRows)
+                                {
+                                    projectChecker.Read();
+                                    string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
+
+                                    var sender = new GmailDotComMail(emailAddress, password);
+                                    sender.SendMail(userChecker.GetString(1), "Coding MarketPlace - inscription", "Votre inscription au projet : " + projectChecker.GetString(0) + " a bien été prise en compte");
+
+                                    Notification notif = new Notification();
+                                    NotificationsController notifCtrl = new NotificationsController();
+                                    notif.Text = "Vous êtes bien inscrit au projet : " + projectChecker.GetString(0);
+                                    notif.UniqId = id;
+                                    notifCtrl.createNotification(notif);
+                                }
+                            }
+
                             return Request.CreateResponse(HttpStatusCode.Created, "Inscription to project successful");
                         }
                         else
@@ -216,7 +234,7 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Validate")]
         public object Validate([FromBody] Project project, string id)
         {
-            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT uniq_id From users WHERE uniq_id = '" + project.IdUser + "'"))
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT uniq_id, Email From users WHERE uniq_id = '" + project.IdUser + "'"))
             {
                 if (userChecker.HasRows)
                 {
@@ -226,6 +244,23 @@ namespace CodingMarketPlace.Controllers
                         InscriptionsController insc = new InscriptionsController();
                         if (insc.validateInscription(project, id).Equals("ok"))
                         {
+                            using (MySqlDataReader projectChecker = MySqlHelper.ExecuteReader(Connection, "SELECT title From projects WHERE id = '" + project.Id + "'"))
+                            {
+                                if (projectChecker.HasRows)
+                                {
+                                    projectChecker.Read();
+                                    string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
+
+                                    var sender = new GmailDotComMail(emailAddress, password);
+                                    sender.SendMail(userChecker.GetString(1), "Coding MarketPlace - validation", "Vous avez été retenu pour travailler sur le projet : " + projectChecker.GetString(0) + "");
+
+                                    Notification notif = new Notification();
+                                    NotificationsController notifCtrl = new NotificationsController();
+                                    notif.Text = "Vous avez été retenu pour travailler sur le projet : " + projectChecker.GetString(0);
+                                    notif.UniqId = project.IdUser;
+                                    notifCtrl.createNotification(notif);
+                                }
+                            }
 
                             return Request.CreateResponse(HttpStatusCode.OK, "Project has been validated");
                         }
@@ -255,7 +290,7 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Finish")]
         public object FinishProject([FromBody] Project project, string id)
         {
-            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id From users WHERE uniq_id = '" + id + "'"))
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id, Email From users WHERE uniq_id = '" + id + "'"))
             {
                 if (userChecker.HasRows)
                 {
@@ -265,6 +300,51 @@ namespace CodingMarketPlace.Controllers
                         string query = "UPDATE projects SET over = true WHERE id = '" + project.Id + "'";
 
                         MySqlHelper.ExecuteNonQuery(Connection, query);
+
+                        using (MySqlDataReader projectChecker = MySqlHelper.ExecuteReader(Connection, "SELECT title From projects WHERE id = '" + project.Id + "'"))
+                        {
+                            if (projectChecker.HasRows)
+                            {
+                                projectChecker.Read();
+                                string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
+
+                                var sender = new GmailDotComMail(emailAddress, password);
+                                sender.SendMail(userChecker.GetString(1), "Coding MarketPlace - Fin", "Le projet : " + projectChecker.GetString(0) + " est terminé");
+                                
+                                Notification notif = new Notification();
+                                NotificationsController notifCtrl = new NotificationsController();
+                                notif.Text = "Le projet : " + projectChecker.GetString(0) + "est terminé";
+                                notif.UniqId = id;
+                                notifCtrl.createNotification(notif);
+                            }
+                        }
+
+                        using (MySqlDataReader projectChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id_user, title From projects WHERE id = '" + project.Id + "'"))
+                        {
+                            if (projectChecker.HasRows)
+                            {
+                                projectChecker.Read();
+
+                                using (MySqlDataReader finalUserChecker = MySqlHelper.ExecuteReader(Connection, "SELECT Email From users WHERE uniq_id = '" + projectChecker.GetString(0) + "'"))
+                                {
+                                    if (finalUserChecker.HasRows)
+                                    {
+                                        finalUserChecker.Read();
+
+                                        string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
+
+                                        var sender = new GmailDotComMail(emailAddress, password);
+                                        sender.SendMail(finalUserChecker.GetString(0), "Coding MarketPlace - Fin", "Le projet : " + projectChecker.GetString(1) + " est terminé");
+                                        
+                                        Notification notif = new Notification();
+                                        NotificationsController notifCtrl = new NotificationsController();
+                                        notif.Text = "Le projet : " + projectChecker.GetString(1) + "est terminé";
+                                        notif.UniqId = projectChecker.GetString(0);
+                                        notifCtrl.createNotification(notif);
+                                    }
+                                }
+                            }
+                        }
 
                         return Request.CreateResponse(HttpStatusCode.OK);
                     }

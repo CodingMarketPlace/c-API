@@ -74,6 +74,11 @@ namespace CodingMarketPlace.Controllers
 
             MySqlHelper.ExecuteNonQuery(Connection, query, parms.ToArray());
 
+            string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
+
+            var sender = new GmailDotComMail(emailAddress, password);
+            sender.SendMail(user.Email, "Coding MarketPlace - inscription", "Bienvenue sur le site coding MarketPlace, " + user.Login);
+
             return Request.CreateResponse(HttpStatusCode.Created, "Utilisateur créé avec succes");
         }
 
