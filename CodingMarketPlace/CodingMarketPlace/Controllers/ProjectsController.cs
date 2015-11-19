@@ -450,25 +450,33 @@ namespace CodingMarketPlace.Controllers
         {
             List<Project> projects = new List<Project>();
 
-            string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date, id, over From projects where id_user = " + id + "";
-
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, query))
+            using (MySqlDataReader inscChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id_project FROM inscriptions WHERE id_user = '" + id + "'"))
             {
-                if (reader.HasRows)
+                if (inscChecker.HasRows)
                 {
-                    while (reader.Read())
+                    while (inscChecker.Read())
                     {
-                        Project project = new Project();
-                        project.Title = reader.GetString(0);
-                        project.Description = reader.GetString(1);
-                        project.Duration = reader.GetInt32(2);
-                        project.Budget = reader.GetInt32(3);
-                        project.IdUser = reader.GetString(4);
-                        project.ImageUrl = reader.GetString(5);
-                        project.CreationDate = reader.GetDateTime(6);
-                        project.Id = reader.GetInt32(7);
-                        project.over = reader.GetBoolean(8);
-                        projects.Add(project);
+                        int theId = inscChecker.GetInt32(0);
+                        string query = "SELECT title, description, duration, budget, id_user, image_url, creation_date, id, over From projects where id = " + theId + "";
+
+                        using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, query))
+                        {
+                            if (reader.HasRows)
+                            {
+                                reader.Read();
+                                Project project = new Project();
+                                project.Title = reader.GetString(0);
+                                project.Description = reader.GetString(1);
+                                project.Duration = reader.GetInt32(2);
+                                project.Budget = reader.GetInt32(3);
+                                project.IdUser = reader.GetString(4);
+                                project.ImageUrl = reader.GetString(5);
+                                project.CreationDate = reader.GetDateTime(6);
+                                project.Id = reader.GetInt32(7);
+                                project.over = reader.GetBoolean(8);
+                                projects.Add(project);
+                            }
+                        }
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, projects);
                 }
