@@ -47,7 +47,7 @@ namespace CodingMarketPlace.Controllers
 
         public string validateInscription(Project project, string id)
         {
-            string query = "UPDATE inscriptions SET Validated = true WHERE id_user = " + id + " AND id_project = " + project.Id;
+            string query = "UPDATE inscriptions SET Validated = true WHERE id_user = " + project.IdUser + " AND id_project = " + project.Id;
             MySqlHelper.ExecuteNonQuery(Connection, query);
             deleteOtherApply(project, id);
 
@@ -83,7 +83,7 @@ namespace CodingMarketPlace.Controllers
 
         public string deleteOtherApply(Project project, string id)
         {
-            string query = "DELETE FROM inscriptions WHERE id_project = " + project.Id + " AND id_user != " + id;
+            string query = "DELETE FROM inscriptions WHERE id_project = " + project.Id + " AND id_user != " + project.IdUser;
             MySqlHelper.ExecuteNonQuery(Connection, query);
             return "ok"; 
         }

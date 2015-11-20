@@ -245,44 +245,38 @@ namespace CodingMarketPlace.Controllers
         [ActionName("Validate")]
         public object Validate([FromBody] Project project, string id)
         {
-            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT uniq_id, Email From users WHERE uniq_id = '" + project.IdUser + "'"))
+            using (MySqlDataReader userChecker = MySqlHelper.ExecuteReader(Connection, "SELECT uniq_id, Email From users WHERE uniq_id = '" + id + "'"))
             {
                 if (userChecker.HasRows)
                 {
                     userChecker.Read();
-                    if (userChecker.GetString(0) == project.IdUser)
+
+                    InscriptionsController insc = new InscriptionsController();
+                    if (insc.validateInscription(project, id).Equals("ok"))
                     {
-                        InscriptionsController insc = new InscriptionsController();
-                        if (insc.validateInscription(project, id).Equals("ok"))
+                        using (MySqlDataReader projectChecker = MySqlHelper.ExecuteReader(Connection, "SELECT title From projects WHERE id = '" + project.Id + "'"))
                         {
-                            using (MySqlDataReader projectChecker = MySqlHelper.ExecuteReader(Connection, "SELECT title From projects WHERE id = '" + project.Id + "'"))
+                            if (projectChecker.HasRows)
                             {
-                                if (projectChecker.HasRows)
-                                {
-                                    projectChecker.Read();
-                                    string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
+                                projectChecker.Read();
+                                string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
 
-                                    var sender = new GmailDotComMail(emailAddress, password);
-                                    sender.SendMail(userChecker.GetString(1), "Coding MarketPlace - validation", "Vous avez été retenu pour travailler sur le projet : " + projectChecker.GetString(0) + "");
+                                var sender = new GmailDotComMail(emailAddress, password);
+                                sender.SendMail(userChecker.GetString(1), "Coding MarketPlace - validation", "Vous avez été retenu pour travailler sur le projet : " + projectChecker.GetString(0) + "");
 
-                                    Notification notif = new Notification();
-                                    NotificationsController notifCtrl = new NotificationsController();
-                                    notif.Text = "Vous avez été retenu pour travailler sur le projet : " + projectChecker.GetString(0);
-                                    notif.UniqId = project.IdUser;
-                                    notifCtrl.createNotification(notif);
+                                Notification notif = new Notification();
+                                NotificationsController notifCtrl = new NotificationsController();
+                                notif.Text = "Vous avez été retenu pour travailler sur le projet : " + projectChecker.GetString(0);
+                                notif.UniqId = project.IdUser;
+                                notifCtrl.createNotification(notif);
 
-                                    string query = "UPDATE projects SET started = true WHERE id = '" + project.Id + "'";
+                                string query = "UPDATE projects SET started = true WHERE id = '" + project.Id + "'";
 
-                                    MySqlHelper.ExecuteNonQuery(Connection, query);
-                                }
+                                MySqlHelper.ExecuteNonQuery(Connection, query);
                             }
+                        }
 
-                            return Request.CreateResponse(HttpStatusCode.OK, "Project has been validated");
-                        }
-                        else
-                        {
-                            return Request.CreateResponse(HttpStatusCode.InternalServerError, "Project could not be validated");
-                        }
+                        return Request.CreateResponse(HttpStatusCode.OK, "Project has been validated");
                     }
                     else
                     {
