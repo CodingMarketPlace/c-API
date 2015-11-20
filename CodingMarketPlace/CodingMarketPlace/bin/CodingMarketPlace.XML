@@ -170,6 +170,16 @@
             <response code="200">User successfully updated</response>
             <response code="400">You are not the user you want to update</response>
         </member>
+        <member name="M:CodingMarketPlace.Controllers.UsersController.ResetPassword(CodingMarketPlace.Models.User,System.String)">
+            <summary>
+            Reset a user's password
+            </summary>
+            <param name="user">User Model</param>
+            <param name="id">the user id</param>
+            <remarks>Reset a user's password</remarks>
+            <response code="200">User successfully updated</response>
+            <response code="400">Erreur</response>
+        </member>
         <member name="M:CodingMarketPlace.Controllers.UsersController.ChangeRole(CodingMarketPlace.Models.User,System.String)">
             <summary>
             Change a user's role

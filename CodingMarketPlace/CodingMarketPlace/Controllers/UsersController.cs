@@ -243,7 +243,8 @@ namespace CodingMarketPlace.Controllers
             {
                 if (reader.HasRows)
                 {
-                    string query = "UPDATE users SET password = '" + encryptString(user.Email) + "' WHERE uniq_id = '" + id + "'";
+                    reader.Read();
+                    string query = "UPDATE users SET password = '" + encryptString(user.Password) + "' WHERE uniq_id = '" + id + "'";
 
                     MySqlHelper.ExecuteNonQuery(Connection, query);
 
