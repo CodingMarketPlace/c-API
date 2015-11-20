@@ -41,7 +41,7 @@ namespace CodingMarketPlace.Controllers
                             theImageUrl = project.ImageUrl;
                         }
 
-                            string query = "INSERT INTO projects (Id, title, description, duration, budget, id_user, image_url, creation_date) VALUES (NULL, '@title', '@description', @duration, @budget, @id_user, '" + theImageUrl + "', @creation_date)";
+                            string query = "INSERT INTO projects (Id, title, description, duration, budget, id_user, image_url, creation_date) VALUES (NULL, @title, @description, @duration, @budget, @id_user, '" + theImageUrl + "', @creation_date)";
 
                         DateTime localDate = DateTime.Now;
 
