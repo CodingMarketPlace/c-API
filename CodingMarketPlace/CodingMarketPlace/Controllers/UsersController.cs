@@ -212,6 +212,10 @@ namespace CodingMarketPlace.Controllers
                             cptPointsToUpdate--;
                         }
                     }
+                    else
+                    {
+                        query += "image_Url = 'http://codingmarketplace.herokuapp.com/app/img/upload/profile_user_default.jpg'";
+                    }
 
                     query += " WHERE uniq_id = '" + id + "'";
 
@@ -239,8 +243,7 @@ namespace CodingMarketPlace.Controllers
             {
                 if (reader.HasRows)
                 {
-                   
-                    string query = "UPDATE users SET password = '" + encryptString(user.UniqId) + "' WHERE uniq_id = '" + id + "'";
+                    string query = "UPDATE users SET password = '" + encryptString(user.Email) + "' WHERE uniq_id = '" + id + "'";
 
                     MySqlHelper.ExecuteNonQuery(Connection, query);
 
