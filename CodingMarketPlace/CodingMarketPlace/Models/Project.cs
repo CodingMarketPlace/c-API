@@ -16,5 +16,6 @@ namespace CodingMarketPlace.Models
         public string ImageUrl { get; set; }
         public DateTime CreationDate { get; set; }
         public bool over { get; set; }
+        public bool started { get; set; }
     }
 }

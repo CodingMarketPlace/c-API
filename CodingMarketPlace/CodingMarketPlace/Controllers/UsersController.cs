@@ -67,7 +67,14 @@ namespace CodingMarketPlace.Controllers
             parms.Add(new MySqlParameter("developper", user.Developper));
             parms.Add(new MySqlParameter("projectCreator", user.ProjectCreator));
             parms.Add(new MySqlParameter("description", user.Description));
-            parms.Add(new MySqlParameter("imageUrl", user.ImageUrl));
+            if(user.ImageUrl != "")
+            {
+                parms.Add(new MySqlParameter("imageUrl", user.ImageUrl));
+            }
+            else
+            {
+                parms.Add(new MySqlParameter("imageUrl", "http://codingmarketplace.herokuapp.com/app/img/upload/profile_user_default.jpg"));
+            }
             parms.Add(new MySqlParameter("firstName", user.FirstName));
             parms.Add(new MySqlParameter("lastName", user.LastName));
             parms.Add(new MySqlParameter("uniqId", uniqId));
