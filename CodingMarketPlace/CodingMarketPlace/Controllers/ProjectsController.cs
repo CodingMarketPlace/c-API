@@ -35,7 +35,13 @@ namespace CodingMarketPlace.Controllers
                     userChecker.Read();
                     if (userChecker.GetBoolean(0))
                     {
-                        string query = "INSERT INTO projects (Id, title, description, duration, budget, id_user, image_url, creation_date) VALUES (NULL, @title, @description, @duration, @budget, @id_user, @image_url, @creation_date)";
+                        string theImageUrl = "http://codingmarketplace.herokuapp.com/app/img/upload/project_default.png";
+                        if (project.ImageUrl != "")
+                        {
+                            theImageUrl = project.ImageUrl;
+                        }
+
+                            string query = "INSERT INTO projects (Id, title, description, duration, budget, id_user, image_url, creation_date) VALUES (NULL, '@title', '@description', @duration, @budget, @id_user, '" + theImageUrl + "', @creation_date)";
 
                         DateTime localDate = DateTime.Now;
 
@@ -46,14 +52,6 @@ namespace CodingMarketPlace.Controllers
                         parms.Add(new MySqlParameter("duration", project.Duration));
                         parms.Add(new MySqlParameter("budget", project.Budget));
                         parms.Add(new MySqlParameter("id_user", id));
-                        if (project.ImageUrl != "")
-                        {
-                            parms.Add(new MySqlParameter("imageUrl", project.ImageUrl));
-                        }
-                        else
-                        {
-                            parms.Add(new MySqlParameter("imageUrl", "http://www.degustandco.com/bundles/dccore/images/profile_user_default.jpg"));
-                        }
                         parms.Add(new MySqlParameter("creation_date", localDate));
 
                         MySqlHelper.ExecuteNonQuery(Connection, query, parms.ToArray());
@@ -157,7 +155,7 @@ namespace CodingMarketPlace.Controllers
                         }
                         else
                         {
-                            query += "image_url = 'http://www.degustandco.com/bundles/dccore/images/profile_user_default.jpg'";
+                            query += "image_url = 'http://codingmarketplace.herokuapp.com/app/img/upload/project_default.png'";
                         }
 
                         query += " WHERE id = '" + project.Id + "'";
@@ -295,7 +293,6 @@ namespace CodingMarketPlace.Controllers
         /// <remarks>Fnish a project</remarks>
         /// <response code="201">project successfully updated</response>
         /// <response code="500">Internal server error</response>
-        // test
         [HttpPost]
         [ActionName("Finish")]
         public object FinishProject([FromBody] Project project, string id)
