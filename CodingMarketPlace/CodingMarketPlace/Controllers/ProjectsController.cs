@@ -304,63 +304,56 @@ namespace CodingMarketPlace.Controllers
                 if (userChecker.HasRows)
                 {
                     userChecker.Read();
-                    if (id == project.IdUser)
+                    string query = "UPDATE projects SET over = true WHERE id = '" + project.Id + "'";
+
+                    MySqlHelper.ExecuteNonQuery(Connection, query);
+
+                    using (MySqlDataReader projectChecker = MySqlHelper.ExecuteReader(Connection, "SELECT title From projects WHERE id = '" + project.Id + "'"))
                     {
-                        string query = "UPDATE projects SET over = true WHERE id = '" + project.Id + "'";
-
-                        MySqlHelper.ExecuteNonQuery(Connection, query);
-
-                        using (MySqlDataReader projectChecker = MySqlHelper.ExecuteReader(Connection, "SELECT title From projects WHERE id = '" + project.Id + "'"))
+                        if (projectChecker.HasRows)
                         {
-                            if (projectChecker.HasRows)
-                            {
-                                projectChecker.Read();
-                                string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
+                            projectChecker.Read();
+                            string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
 
-                                var sender = new GmailDotComMail(emailAddress, password);
-                                sender.SendMail(userChecker.GetString(1), "Coding MarketPlace - Fin", "Le projet : " + projectChecker.GetString(0) + " est terminé");
-                                
-                                Notification notif = new Notification();
-                                NotificationsController notifCtrl = new NotificationsController();
-                                notif.Text = "Le projet : " + projectChecker.GetString(0) + "est terminé";
-                                notif.UniqId = id;
-                                notifCtrl.createNotification(notif);
-                            }
+                            var sender = new GmailDotComMail(emailAddress, password);
+                            sender.SendMail(userChecker.GetString(1), "Coding MarketPlace - Fin", "Le projet : " + projectChecker.GetString(0) + " est terminé");
+
+                            Notification notif = new Notification();
+                            NotificationsController notifCtrl = new NotificationsController();
+                            notif.Text = "Le projet : " + projectChecker.GetString(0) + "est terminé";
+                            notif.UniqId = id;
+                            notifCtrl.createNotification(notif);
                         }
+                    }
 
-                        using (MySqlDataReader projectChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id_user, title From projects WHERE id = '" + project.Id + "'"))
+                    using (MySqlDataReader projectChecker = MySqlHelper.ExecuteReader(Connection, "SELECT id_user, title From projects WHERE id = '" + project.Id + "'"))
+                    {
+                        if (projectChecker.HasRows)
                         {
-                            if (projectChecker.HasRows)
+                            projectChecker.Read();
+
+                            using (MySqlDataReader finalUserChecker = MySqlHelper.ExecuteReader(Connection, "SELECT Email From users WHERE uniq_id = '" + projectChecker.GetString(0) + "'"))
                             {
-                                projectChecker.Read();
-
-                                using (MySqlDataReader finalUserChecker = MySqlHelper.ExecuteReader(Connection, "SELECT Email From users WHERE uniq_id = '" + projectChecker.GetString(0) + "'"))
+                                if (finalUserChecker.HasRows)
                                 {
-                                    if (finalUserChecker.HasRows)
-                                    {
-                                        finalUserChecker.Read();
+                                    finalUserChecker.Read();
 
-                                        string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
+                                    string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
 
-                                        var sender = new GmailDotComMail(emailAddress, password);
-                                        sender.SendMail(finalUserChecker.GetString(0), "Coding MarketPlace - Fin", "Le projet : " + projectChecker.GetString(1) + " est terminé");
-                                        
-                                        Notification notif = new Notification();
-                                        NotificationsController notifCtrl = new NotificationsController();
-                                        notif.Text = "Le projet : " + projectChecker.GetString(1) + "est terminé";
-                                        notif.UniqId = projectChecker.GetString(0);
-                                        notifCtrl.createNotification(notif);
-                                    }
+                                    var sender = new GmailDotComMail(emailAddress, password);
+                                    sender.SendMail(finalUserChecker.GetString(0), "Coding MarketPlace - Fin", "Le projet : " + projectChecker.GetString(1) + " est terminé");
+
+                                    Notification notif = new Notification();
+                                    NotificationsController notifCtrl = new NotificationsController();
+                                    notif.Text = "Le projet : " + projectChecker.GetString(1) + "est terminé";
+                                    notif.UniqId = projectChecker.GetString(0);
+                                    notifCtrl.createNotification(notif);
                                 }
                             }
                         }
+                    }
 
-                        return Request.CreateResponse(HttpStatusCode.OK);
-                    }
-                    else
-                    {
-                        return Request.CreateResponse(HttpStatusCode.BadRequest, "You are not the project owner");
-                    }
+                    return Request.CreateResponse(HttpStatusCode.OK);
                 }
             }
             return Request.CreateResponse(HttpStatusCode.InternalServerError, "Error");
