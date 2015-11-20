@@ -59,5 +59,20 @@ namespace CodingMarketPlace.Controllers
             }
         }
 
+        /// <summary>
+        /// Contact us
+        /// </summary>
+        /// <param name="mail">MailContactUs Model</param>
+        /// <remarks>Send an email to us for questions or remarks</remarks>
+        [HttpPost]
+        [ActionName("ContactUs")]
+        public void ContactUs([FromBody] MailContactUs mail)
+        {
+            string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
+
+            var sender = new GmailDotComMail(emailAddress, password);
+            sender.SendMail("codingmarketplace@gmail.com", "Coding MarketPlace - Contact Us", "L'utilisateur : " + mail.FirstName + " " + mail.LastName + " nous a contacté.\nSon message est le suivant:\n\n" + mail.Message + "\n\nPour lui répondre, voici son adresse email : " + mail.Email);
+
+        }
     }
 }
