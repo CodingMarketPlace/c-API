@@ -295,6 +295,7 @@ namespace CodingMarketPlace.Controllers
         /// <remarks>Fnish a project</remarks>
         /// <response code="201">project successfully updated</response>
         /// <response code="500">Internal server error</response>
+        // test
         [HttpPost]
         [ActionName("Finish")]
         public object FinishProject([FromBody] Project project, string id)
