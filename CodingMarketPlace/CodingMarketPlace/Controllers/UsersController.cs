@@ -431,12 +431,12 @@ namespace CodingMarketPlace.Controllers
         /// <remarks>Send an email to restore password</remarks>
         /// <response code="200">Email with link</response>
         /// <response code="400">Wrong id</response>
-        [HttpGet]
+        [HttpPost]
         [ActionName("ForgottenPass")]
-        public object ForgottenPass(string id)
+        public object ForgottenPass([FromBody] User user)
         {
             User response = new User();
-            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Uniq_id From users WHERE Email = '" + id + "'"))
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT Uniq_id From users WHERE Email = '" + user.Email + "'"))
             {
                 if (reader.HasRows)
                 {
@@ -445,7 +445,7 @@ namespace CodingMarketPlace.Controllers
                     string emailAddress = "codingmarketplace@gmail.com", password = "GSL5Ty5Botp0LMCB12^t";
 
                     var sender = new GmailDotComMail(emailAddress, password);
-                    sender.SendMail(id, "Coding MarketPlace - Recuperation de mot de passe", "Pour réinitialiser votre mot de passe, veuillez suivre le lien suivant : http://codingmarketplace.herokuapp.com/app/#/forgot-password/" + reader.GetString(0));
+                    sender.SendMail(user.Email, "Coding MarketPlace - Recuperation de mot de passe", "Pour réinitialiser votre mot de passe, veuillez suivre le lien suivant : http://codingmarketplace.herokuapp.com/app/#/forgot-password/" + reader.GetString(0));
 
                     return Request.CreateResponse(HttpStatusCode.OK, response);
                 }

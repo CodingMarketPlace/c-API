@@ -210,7 +210,7 @@
             <response code="200">Returned user's projects</response>
             <response code="400">Wrong id</response>
         </member>
-        <member name="M:CodingMarketPlace.Controllers.UsersController.ForgottenPass(System.String)">
+        <member name="M:CodingMarketPlace.Controllers.UsersController.ForgottenPass(CodingMarketPlace.Models.User)">
             <summary>
             Send an email to restore password
             </summary>
