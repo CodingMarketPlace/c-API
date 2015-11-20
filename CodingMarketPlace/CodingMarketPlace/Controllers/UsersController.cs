@@ -224,6 +224,33 @@ namespace CodingMarketPlace.Controllers
         }
 
         /// <summary>
+        /// Reset a user's password
+        /// </summary>
+        /// <param name="user">User Model</param>
+        /// <param name="id">the user id</param>
+        /// <remarks>Reset a user's password</remarks>
+        /// <response code="200">User successfully updated</response>
+        /// <response code="400">Erreur</response>
+        [HttpPost]
+        [ActionName("ResetPassword")]
+        public object ResetPassword([FromBody] User user, string id)
+        {
+            using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT * From users WHERE uniq_id = '" + id + "'"))
+            {
+                if (reader.HasRows)
+                {
+                   
+                    string query = "UPDATE users SET password = '" + encryptString(user.UniqId) + "' WHERE uniq_id = '" + id + "'";
+
+                    MySqlHelper.ExecuteNonQuery(Connection, query);
+
+                    return Request.CreateResponse(HttpStatusCode.OK, "Utilisateur mis à jour avec succès");
+                }
+            }
+            return Request.CreateResponse(HttpStatusCode.BadRequest, "Erreur, mise à jour non effectuée");
+        }
+
+        /// <summary>
         /// Change a user's role
         /// </summary>
         /// <param name="user">User Model</param>
