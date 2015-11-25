@@ -463,6 +463,55 @@ namespace CodingMarketPlace.Controllers
         }
 
         /// <summary>
+        /// Ask for user projects
+        /// </summary>
+        /// <param name="id">user's id</param>
+        /// <remarks>Get a user's projects</remarks>
+        /// <response code="200">Returned user's projects</response>
+        /// <response code="400">Wrong id</response>
+        [HttpGet]
+        [ActionName("AllProjects")]
+        public object GetUserCreatedProjects(string id)
+        {
+            using (MySqlDataReader userGetter = MySqlHelper.ExecuteReader(Connection, "SELECT project_creator From users WHERE uniq_id = '" + id + "'"))
+            {
+                if (userGetter.HasRows)
+                {
+                    userGetter.Read();
+                    if (userGetter.GetBoolean(0) == true)
+                    {
+                        List<Project> projects = new List<Project>();
+                        using (MySqlDataReader reader = MySqlHelper.ExecuteReader(Connection, "SELECT title, description, duration, budget, image_url, creation_date, over, id From projects WHERE id_user = '" + id + "'"))
+                        {
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    Project project = new Project();
+                                    project.Title = reader.GetString(0);
+                                    project.Description = reader.GetString(1);
+                                    project.Duration = reader.GetInt32(2);
+                                    project.Budget = reader.GetInt32(3);
+                                    project.ImageUrl = reader.GetString(4);
+                                    project.CreationDate = reader.GetDateTime(5);
+                                    project.over = reader.GetBoolean(6);
+                                    project.Id = reader.GetInt32(7);
+                                    projects.Add(project);
+                                }
+                            }
+                        }
+                        return Request.CreateResponse(HttpStatusCode.OK, projects);
+                    }
+                    else
+                    {
+                        return Request.CreateResponse(HttpStatusCode.BadRequest, "You are not a project creator");
+                    }
+                }
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, "An Error occured");
+            }
+        }
+
+        /// <summary>
         /// Send an email to restore password
         /// </summary>
         /// <param name="id">user's email</param>

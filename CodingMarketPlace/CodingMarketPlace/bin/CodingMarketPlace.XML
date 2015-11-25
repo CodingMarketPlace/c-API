@@ -227,6 +227,15 @@
             <response code="200">Returned user's projects</response>
             <response code="400">Wrong id</response>
         </member>
+        <member name="M:CodingMarketPlace.Controllers.UsersController.GetUserCreatedProjects(System.String)">
+            <summary>
+            Ask for user projects
+            </summary>
+            <param name="id">user's id</param>
+            <remarks>Get a user's projects</remarks>
+            <response code="200">Returned user's projects</response>
+            <response code="400">Wrong id</response>
+        </member>
         <member name="M:CodingMarketPlace.Controllers.UsersController.ForgottenPass(CodingMarketPlace.Models.User)">
             <summary>
             Send an email to restore password
