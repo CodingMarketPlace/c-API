@@ -13,7 +13,7 @@ namespace CodingMarketPlace
         {
             var thisAssembly = typeof(SwaggerConfig).Assembly;
 
-            GlobalConfiguration.Configuration 
+            /*GlobalConfiguration.Configuration 
                 .EnableSwagger(c =>
                     {
                         // Cette ligne de code permet de modifier l'accès à l'url des documents pour la génération du swagger
@@ -26,7 +26,7 @@ namespace CodingMarketPlace
                 .EnableSwaggerUi(c =>
                     {
                        
-                    });
+                    });*/
         }
 
         protected static string GetXmlCommentsPath()
